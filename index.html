@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Трекер ЭП v4.0</title>
+  <title>Трекер ЭП v4.1 | Автономная версия</title>
   <style>
     :root { --primary:#4f46e5; --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --bg:#f8fafc; --card:#fff; --text:#1e293b; --border:#e2e8f0; }
     * { box-sizing:border-box; margin:0; padding:0; }
@@ -11,8 +11,9 @@
     .container { max-width:1600px; margin:0 auto; }
     header { text-align:center; margin-bottom:20px; }
     h1 { font-size:22px; margin-bottom:5px; }
+    .hint { color:#64748b; font-size:13px; margin-bottom:15px; }
     .card { background:var(--card); border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
-    .upload { border:2px dashed var(--border); border-radius:10px; padding:30px; text-align:center; cursor:pointer; }
+    .upload { border:2px dashed var(--border); border-radius:10px; padding:30px; text-align:center; cursor:pointer; transition:0.2s; }
     .upload:hover { border-color:var(--primary); background:#f0f9ff; }
     .upload input { display:none; }
     .btn { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-weight:500; margin:3px; font-size:13px; }
@@ -31,7 +32,7 @@
     tr:hover { background:#f8fafc; }
     .section-row { background:#f0f9ff !important; cursor:pointer; }
     .section-row td { font-weight:600; color:var(--primary); padding:8px 10px; }
-    .code { font-family:monospace; background:#f1f5f9; padding:3px 6px; border-radius:4px; font-size:11px; }
+    .code { font-family:monospace; background:#f1f5f9; padding:3px 6px; border-radius:4px; font-size:11px; display:inline-block; max-width:250px; word-break:break-all; }
     .signatory-box { margin-bottom:4px; }
     .signatory-input { width:100%; padding:4px 6px; border:1px solid var(--border); border-radius:4px; font-size:12px; margin-bottom:2px; }
     .status-btn { display:flex; align-items:center; justify-content:center; gap:4px; padding:4px 8px; border-radius:12px; font-size:11px; font-weight:600; cursor:pointer; width:100%; border:none; }
@@ -46,26 +47,38 @@
     .badge-wait { background:var(--warning); color:#fff; }
     .hidden { display:none !important; }
     .alert { padding:10px; border-radius:6px; margin-bottom:10px; font-size:13px; }
-    .alert-ok { background:#dcfce7; color:#166534; }
-    .alert-err { background:#fee2e2; color:#991b1b; }
+    .alert-ok { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+    .alert-err { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+    .alert-info { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
+    .instructions { background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:15px; font-size:12px; line-height:1.6; }
+    .instructions code { background:#e2e8f0; padding:2px 4px; border-radius:3px; }
     @media(max-width:1024px) { table { font-size:12px; } .stats { grid-template-columns:repeat(2,1fr); } }
   </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>📑 Трекер ЭП v4.0</h1>
-    <p style="color:#64748b;font-size:13px">Структура: Раздел → Часть → Книга | Динамические исполнители</p>
+    <h1>📑 Трекер ЭП v4.1</h1>
+    <p class="hint">Автономная версия | Работает без интернета | CSV/TXT файлы</p>
   </header>
 
   <div id="alerts"></div>
 
+  <div class="instructions">
+    <strong>📋 Как подготовить файл:</strong><br>
+    1. Откройте ваш Word-файл с составом проекта<br>
+    2. Выделите таблицу → <code>Ctrl+C</code><br>
+    3. Откройте Excel → вставьте → <code>Файл → Сохранить как → CSV (разделитель: точка с запятой)</code><br>
+    4. Загрузите полученный <code>.csv</code> файл ниже<br>
+    <em>Или просто скопируйте таблицу в Блокнот и сохраните как <code>.txt</code></em>
+  </div>
+
   <div class="card">
     <div class="upload" id="dropZone">
       <div style="font-size:28px;margin-bottom:8px">📥</div>
-      <div style="font-weight:600">Перетащите файл или нажмите</div>
-      <div style="font-size:12px;color:#64748b">.xlsx, .csv, .txt</div>
-      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt">
+      <div style="font-weight:600">Перетащите CSV/TXT файл или нажмите</div>
+      <div style="font-size:12px;color:#64748b">Поддерживаются: .csv, .txt (разделитель ; или TAB)</div>
+      <input type="file" id="fileInput" accept=".csv,.txt">
     </div>
   </div>
 
@@ -75,25 +88,27 @@
       <div><label style="font-size:11px;color:#64748b">Проверил</label><br><input type="text" id="check" value="Вахрушев" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px"></div>
       <div><label style="font-size:11px;color:#64748b">Н. контр.</label><br><input type="text" id="norm" value="Шанина" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px"></div>
     </div>
-    <button class="btn btn-primary" onclick="applyGlobal()">✅ Применить</button>
-    <button class="btn btn-outline" onclick="exportData()">💾 Сохранить</button>
-    <button class="btn btn-outline" onclick="document.getElementById('importInput').click()">📂 Загрузить</button>
+    <button class="btn btn-primary" onclick="applyGlobal()">✅ Применить ко всем</button>
+    <button class="btn btn-outline" onclick="exportData()">💾 Сохранить данные (JSON)</button>
+    <button class="btn btn-outline" onclick="document.getElementById('importInput').click()">📂 Загрузить сохраненные</button>
+    <button class="btn btn-outline" onclick="exportCSV()">📄 Экспорт в CSV</button>
     <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(this)">
   </div>
 
   <div class="stats hidden" id="stats">
-    <div class="stat"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Всего</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--success)" id="statDone">0</div><div class="stat-label">Готово</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--warning)" id="statWait">0</div><div class="stat-label">В работе</div></div>
+    <div class="stat"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Всего томов</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--success)" id="statDone">0</div><div class="stat-label">✅ Готово</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--warning)" id="statWait">0</div><div class="stat-label">⏳ В работе</div></div>
     <div class="stat"><div class="stat-val" id="statPct">0%</div><div class="stat-label">Прогресс</div></div>
   </div>
 
   <div class="filters hidden" id="filters">
-    <input type="text" class="search" id="search" placeholder="🔍 Поиск..." oninput="render()">
+    <input type="text" class="search" id="search" placeholder=" Поиск по коду или названию..." oninput="render()">
     <select id="filter" onchange="render()" style="padding:8px;border:1px solid var(--border);border-radius:6px">
-      <option value="all">Все</option>
-      <option value="wait"> В работе</option>
+      <option value="all">Все статусы</option>
+      <option value="wait">⏳ В работе</option>
       <option value="done">✅ Готово</option>
+      <option value="rev">🔄 Доработка</option>
     </select>
   </div>
 
@@ -102,14 +117,14 @@
       <table id="tbl">
         <thead>
           <tr>
-            <th>№</th>
-            <th>Раздел</th>
+            <th style="width:50px">№</th>
+            <th style="width:200px">Раздел / Часть / Книга</th>
             <th>Обозначение</th>
             <th>Наименование</th>
             <th style="min-width:140px">Разработал</th>
             <th style="min-width:120px">Проверил</th>
             <th style="min-width:120px">Н. контр.</th>
-            <th>Итог</th>
+            <th style="width:60px">Итог</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -120,115 +135,203 @@
   <div class="card" id="empty">
     <div style="text-align:center;padding:30px;color:#64748b">
       <div style="font-size:40px;margin-bottom:10px">📂</div>
-      <div style="font-weight:600;margin-bottom:8px">Загрузите файл</div>
-      <button class="btn btn-primary" onclick="loadDemo()">🔹 Демо</button>
+      <div style="font-weight:600;margin-bottom:8px">Загрузите CSV/TXT файл</div>
+      <button class="btn btn-primary" onclick="loadDemo()">🔹 Загрузить демо (ваш проект)</button>
     </div>
   </div>
 </div>
 
 <script>
+// === ДАННЫЕ ===
 let data = { vols: [], sign: { check: '', norm: '' } };
-const KEY = 'ep_tracker_v4';
+const KEY = 'ep_tracker_v41';
 const STATUSES = ['⏳ Ожидает', '✅ Подписан', '🔄 Доработка', '➖ Н/Т'];
 
+// === УВЕДОМЛЕНИЯ ===
 function alert(msg, type) {
   document.getElementById('alerts').innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
-  setTimeout(() => document.getElementById('alerts').innerHTML = '', 4000);
+  setTimeout(() => document.getElementById('alerts').innerHTML = '', 5000);
 }
 
-window.onload = () => { load(); setupUpload(); };
+// === ИНИЦИАЛИЗАЦИЯ ===
+window.onload = function() { load(); setupUpload(); };
 
+// === ЗАГРУЗКА ФАЙЛА ===
 function setupUpload() {
-  const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
-  dz.onclick = () => fi.click();
-  dz.ondragover = e => { e.preventDefault(); dz.style.borderColor = 'var(--primary)'; };
-  dz.ondragleave = () => dz.style.borderColor = '';
-  dz.ondrop = e => { e.preventDefault(); dz.style.borderColor = ''; if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
-  fi.onchange = () => { if(fi.files[0]) handleFile(fi.files[0]); };
+  const dz = document.getElementById('dropZone');
+  const fi = document.getElementById('fileInput');
+  
+  dz.onclick = function() { fi.click(); };
+  dz.ondragover = function(e) { e.preventDefault(); dz.style.borderColor = 'var(--primary)'; dz.style.background = '#eff6ff'; };
+  dz.ondragleave = function() { dz.style.borderColor = ''; dz.style.background = ''; };
+  dz.ondrop = function(e) {
+    e.preventDefault();
+    dz.style.borderColor = '';
+    dz.style.background = '';
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  };
+  fi.onchange = function() { if (fi.files[0]) handleFile(fi.files[0]); };
 }
 
 function handleFile(file) {
-  const ext = file.name.split('.').pop().toLowerCase();
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = function(e) {
     try {
-      if(ext === 'xlsx' || ext === 'xls') {
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
-        parseRows(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''}));
-      } else {
-        parseCSV(e.target.result);
-      }
-    } catch(err) { alert('Ошибка: ' + err.message, 'err'); }
+      parseCSV(e.target.result);
+    } catch(err) {
+      alert('Ошибка чтения файла: ' + err.message, 'err');
+      console.error(err);
+    }
   };
-  ext === 'xlsx' || ext === 'xls' ? reader.readAsArrayBuffer(file) : reader.readAsText(file);
+  reader.onerror = function() { alert('Ошибка чтения файла', 'err'); };
+  reader.readAsText(file);
 }
 
+// === ПАРСИНГ CSV/TXT ===
 function parseCSV(text) {
-  const lines = text.split(/\r?\n/).filter(l => l.trim());
-  if(lines.length < 2) { alert('Пустой файл', 'err'); return; }
-  const sep = lines[0].includes('\t') ? '\t' : lines[0].includes(';') ? ';' : ',';
-  const rows = lines.slice(1).map(l => l.split(sep).map(c => c.trim().replace(/^"|"$/g, '')));
-  parseRows(rows);
-}
-
-function parseRows(rows) {
-  const vols = [];
-  let idx = 1, section = '', part = '', book = '';
+  // Разбиваем на строки
+  const lines = text.split(/\r?\n/).filter(function(l) { return l.trim(); });
+  if (lines.length < 2) { alert('Файл пуст или содержит менее 2 строк', 'err'); return; }
   
-  rows.forEach(r => {
-    // Обработка в разных форматах
-    const num = r[0] || r['№ п/п'] || '';
-    const code = r[2] || r['Обозначение'] || '';
-    const name = r[3] || r['Наименование'] || '';
+  // Определяем разделитель
+  const firstLine = lines[0];
+  let sep = ';';
+  if (firstLine.includes('\t')) sep = '\t';
+  else if (firstLine.includes(',')) sep = ',';
+  
+  console.log('Разделитель:', sep === '\t' ? 'TAB' : sep);
+  
+  // Парсим строки
+  const vols = [];
+  let idx = 1;
+  let section = '';
+  let part = '';
+  let book = '';
+  
+  for (let i = 1; i < lines.length; i++) {
+    const cells = lines[i].split(sep).map(function(c) { 
+      return c.trim().replace(/^"|"$/g, ''); 
+    });
     
-    if(!num && !code && !name) return;
+    // Пропускаем пустые строки
+    if (!cells[0] && !cells[1] && !cells[2] && !cells[3]) continue;
     
-    const text = (num + '|' + code + '|' + name).toLowerCase();
+    // Собираем текст для анализа
+    const text = cells.join('|').toLowerCase();
     
     // Пропускаем служебные строки
-    if(text.includes('изм.') || text.includes('подп.') || text.includes('дата') || text.includes('лист') || text.includes('стадия')) return;
-    
-    // Определяем иерархию
-    if(text.match(/раздел\s+\d+/)) {
-      section = (r[3] || name).trim();
-      part = ''; book = '';
-      return;
+    if (text.includes('изм.') || text.includes('подп.') || text.includes('дата') || 
+        text.includes('лист') || text.includes('стадия') || text.includes('разработал') ||
+        text.includes('проверил') || text.includes('н. контр') || text.includes('состав проектной')) {
+      continue;
     }
-    if(text.match(/часть\s+\d+/) && !text.includes('книга')) {
-      part = (r[3] || name).trim();
+    
+    // Определяем иерархию: Раздел
+    if (text.match(/раздел\s*\d+/)) {
+      // Ищем текст раздела в ячейках
+      for (let j = 0; j < cells.length; j++) {
+        if (cells[j].match(/раздел\s*\d+/i)) {
+          section = cells[j];
+          break;
+        }
+      }
+      part = '';
       book = '';
-      return;
-    }
-    if(text.match(/книга\s+\d+/)) {
-      book = (r[3] || name).trim();
-      return;
+      console.log('Раздел:', section);
+      continue;
     }
     
-    // Ищем код тома
-    const codeClean = code.replace(/\s+/g, '');
-    if(codeClean.match(/дп-\d{4}-\d+-птс/i)) {
+    // Определяем иерархию: Часть
+    if (text.match(/часть\s*\d+/) && !text.includes('книга')) {
+      for (let j = 0; j < cells.length; j++) {
+        if (cells[j].match(/часть\s*\d+/i)) {
+          part = cells[j];
+          break;
+        }
+      }
+      book = '';
+      console.log('Часть:', part);
+      continue;
+    }
+    
+    // Определяем иерархию: Книга
+    if (text.match(/книга\s*\d+/)) {
+      for (let j = 0; j < cells.length; j++) {
+        if (cells[j].match(/книга\s*\d+/i)) {
+          book = cells[j];
+          break;
+        }
+      }
+      console.log('Книга:', book);
+      continue;
+    }
+    
+    // Ищем код тома (гибкий поиск с пробелами)
+    let code = '';
+    let codeIdx = -1;
+    let name = '';
+    let num = '';
+    
+    // Метод 1: ищем по колонкам (№, Обозначение, Наименование)
+    if (cells[0] && cells[0].match(/^\d/)) num = cells[0];
+    if (cells[1] && cells[1].match(/дп-/i)) { code = cells[1]; codeIdx = 1; }
+    if (cells[2]) name = cells[2];
+    
+    // Метод 2: ищем паттерн ДП-...-ПТС в любой ячейке
+    if (!code) {
+      for (let j = 0; j < cells.length; j++) {
+        if (cells[j].match(/дп-\d{4}-\d+-птс/i)) {
+          code = cells[j];
+          codeIdx = j;
+          break;
+        }
+      }
+    }
+    
+    // Если нашли код — создаем том
+    if (code) {
+      // Очищаем код от пробелов для хранения
       const cleanCode = code.replace(/\s+/g, '').replace(/-с\s*п$/i, '-СП');
+      
+      // Если название не найдено, берем текст после кода
+      if (!name && codeIdx >= 0) {
+        for (let j = codeIdx + 1; j < cells.length; j++) {
+          if (cells[j].length > 10 && !cells[j].match(/раздел|часть|книга/i)) {
+            name = cells[j];
+            break;
+          }
+        }
+      }
+      
       vols.push({
         id: idx++,
         num: num || String(idx),
-        section, part, book,
+        section: section,
+        part: part,
+        book: book,
         code: cleanCode,
         name: name || 'Без названия',
-        devs: [{n:'', s:'⏳ Ожидает', d:''}],
-        check: {n:'', s:'⏳ Ожидает', d:''},
-        norm: {n:'', s:'⏳ Ожидает', d:''}
+        devs: [{ n: '', s: '⏳ Ожидает', d: '' }],
+        check: { n: '', s: '⏳ Ожидает', d: '' },
+        norm: { n: '', s: '⏳ Ожидает', d: '' }
       });
+      
+      console.log('✓ Том:', cleanCode, name);
     }
-  });
+  }
   
-  if(vols.length === 0) { alert('Тома не найдены', 'err'); return; }
+  if (vols.length === 0) {
+    alert('Тома не найдены. Проверьте формат файла. Должна быть таблица с колонками: №, Обозначение, Наименование', 'err');
+    return;
+  }
   
   data.vols = vols;
   showUI();
-  alert('Загружено ' + vols.length + ' томов', 'ok');
+  alert('✅ Загружено ' + vols.length + ' томов', 'ok');
   applyGlobal();
 }
 
+// === ПОКАЗАТЬ ИНТЕРФЕЙС ===
 function showUI() {
   document.getElementById('signatoryCard').classList.remove('hidden');
   document.getElementById('stats').classList.remove('hidden');
@@ -237,55 +340,85 @@ function showUI() {
   document.getElementById('empty').classList.add('hidden');
 }
 
+// === ДЕМО-ДАННЫЕ (ваш проект) ===
 function loadDemo() {
   data.vols = [
-    {id:1,num:'1.1',section:'Раздел 1',part:'Часть 1',book:'',code:'ДП-2025-1246-ПТС1.1-ПЗ1',name:'Общая пояснительная записка',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
-    {id:2,num:'2.1',section:'Раздел 2',part:'Часть 1',book:'',code:'ДП-2025-1246-ПТС1.1-ППО1',name:'Текстовая часть',devs:[{n:'Савельев',s:' Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
-    {id:3,num:'2.2.1',section:'Раздел 2',part:'Часть 2',book:'Книга 1',code:'ДП-2025-1246-ПТС1.1-ППО2.1',name:'Участок 1 ПК 0 – ПК 295',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}}
+    {id:1,num:'1.1',section:'Раздел 1. Пояснительная записка',part:'Часть 1. Общая пояснительная записка',book:'',code:'ДП-2025-1246-ПТС1.1-ПЗ1',name:'Часть 1. Общая пояснительная записка',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:2,num:'1.2',section:'Раздел 1. Пояснительная записка',part:'Часть 2. Исходно-разрешительная документация',book:'',code:'ДП-2025-1246-ПТС1.1-ПЗ2',name:'Часть 2. Исходно-разрешительная документация',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:3,num:'2.1',section:'Раздел 2. Проект полосы отвода',part:'Часть 1. Текстовая часть',book:'',code:'ДП-2025-1246-ПТС1.1-ППО1',name:'Часть 1. Текстовая часть',devs:[{n:'Савельев',s:' Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:4,num:'2.2.1',section:'Раздел 2. Проект полосы отвода',part:'Часть 2. План автомобильной дороги...',book:'Книга 1. Участок 1 ПК 0 – ПК 295',code:'ДП-2025-1246-ПТС1.1-ППО2.1',name:'Книга 1. Участок 1 ПК 0 – ПК 295. План автомобильной дороги...',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:5,num:'2.2.2',section:'Раздел 2. Проект полосы отвода',part:'Часть 2. План автомобильной дороги...',book:'Книга 2. Участок 2 ПК 295 – ПК 530',code:'ДП-2025-1246-ПТС1.1-ППО2.2',name:'Книга 2. Участок 2 ПК 295 – ПК 530. План автомобильной дороги...',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:6,num:'2.2.3',section:'Раздел 2. Проект полосы отвода',part:'Часть 2. План автомобильной дороги...',book:'Книга 3. Участок 3 ПК 530 – ПК 626+91,28',code:'ДП-2025-1246-ПТС1.1-ППО2.3',name:'Книга 3. Участок 3 ПК 530 – ПК 626+91,28. План автомобильной дороги...',devs:[{n:'Савельев',s:' Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:7,num:'3.1',section:'Раздел 3. Технологические и конструктивные решения...',part:'Часть 1. Текстовая часть',book:'',code:'ДП-2025-1246-ПТС1.1-ТКР1',name:'Часть 1. Текстовая часть',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:8,num:'3.2.1',section:'Раздел 3. Технологические и конструктивные решения...',part:'Часть 2. Графическая часть',book:'Книга 1. Участок 1 ПК 0+00 – ПК 295+00',code:'ДП-2025-1246-ПТС1.1-ТКР2.1',name:'Книга 1. Участок 1 ПК 0+00 – ПК 295+00',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:9,num:'3.2.2',section:'Раздел 3. Технологические и конструктивные решения...',part:'Часть 2. Графическая часть',book:'Книга 2. Участок 2 ПК 295+00 – ПК 530+00',code:'ДП-2025-1246-ПТС1.1-ТКР2.2',name:'Книга 2. Участок 2 ПК 295+00 – ПК 530+00',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:10,num:'3.2.3',section:'Раздел 3. Технологические и конструктивные решения...',part:'Часть 2. Графическая часть',book:'Книга 3. Участок 3 ПК 530+00 – ПК 626+91,28',code:'ДП-2025-1246-ПТС1.1-ТКР2.3',name:'Книга 3. Участок 3 ПК 530+00 – ПК 626+91,28',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:11,num:'3.3',section:'Раздел 3. Технологические и конструктивные решения...',part:'Часть 3. Мероприятия по усилению грунтов...',book:'',code:'ДП-2025-1246-ПТС1.1-ТКР3',name:'Часть 3. Мероприятия по усилению грунтов основания насыпи...',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:12,num:'5.1',section:'Раздел 5. Проект организации строительства',part:'Часть 1. Проект организации строительства',book:'',code:'ДП-2025-1246-ПТС1.1-ПОС1',name:'Часть 1. Проект организации строительства',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:13,num:'5.2',section:'Раздел 5. Проект организации строительства',part:'Часть 2. Организация дорожного движения...',book:'',code:'ДП-2025-1246-ПТС1.1-ПОС2',name:'Часть 2. Организация дорожного движения на время проведения работ',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:14,num:'6.1',section:'Раздел 6. Мероприятия по охране окружающей среды',part:'Часть 1. Мероприятия по охране окружающей среды',book:'',code:'ДП-2025-1246-ПТС1.1-ООС1',name:'Часть 1. Мероприятия по охране окружающей среды',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}},
+    {id:15,num:'6.2',section:'Раздел 6. Мероприятия по охране окружающей среды',part:'Часть 2. Мероприятия по охране окружающей среды (Приложения)',book:'',code:'ДП-2025-1246-ПТС1.1-ООС2',name:'Часть 2. Мероприятия по охране окружающей среды (Приложения)',devs:[{n:'Савельев',s:' Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:16,num:'7',section:'Раздел 7. Мероприятия по обеспечению пожарной безопасности',part:'',book:'',code:'ДП-2025-1246-ПТС1.1-ПБ',name:'Раздел 7. Мероприятия по обеспечению пожарной безопасности',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:17,num:'9.1.1',section:'Раздел 9. Смета на строительство...',part:'Часть 1. Сводный сметный расчет',book:'Книга 1. Пояснительная записка',code:'ДП-2025-1246-ПТС1.1-СМ1.1',name:'Книга 1. Пояснительная записка',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}},
+    {id:18,num:'9.1.2',section:'Раздел 9. Смета на строительство...',part:'Часть 1. Сводный сметный расчет',book:'Книга 2. Сводный сметный расчет',code:'ДП-2025-1246-ПТС1.1-СМ1.2',name:'Книга 2. Сводный сметный расчет',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:19,num:'9.1.3',section:'Раздел 9. Смета на строительство...',part:'Часть 1. Сводный сметный расчет',book:'Книга 3. Сметные расчеты на отдельные виды работ',code:'ДП-2025-1246-ПТС1.1-СМ1.3',name:'Книга 3. Сметные расчеты на отдельные виды работ',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:20,num:'9.2',section:'Раздел 9. Смета на строительство...',part:'Часть 2. Объектные и локальные сметные расчеты',book:'',code:'ДП-2025-1246-ПТС1.1-СМ2',name:'Часть 2. Объектные и локальные сметные расчеты',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}},
+    {id:21,num:'9.3',section:'Раздел 9. Смета на строительство...',part:'Часть 3. Реестр цен на материалы...',book:'',code:'ДП-2025-1246-ПТС1.1-СМ3',name:'Часть 3. Реестр цен на материалы, изделия и конструкции...',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:22,num:'9.4',section:'Раздел 9. Смета на строительство...',part:'Часть 4. Сводная ведомость объемов работ',book:'',code:'ДП-2025-1246-ПТС1.1-СМ4',name:'Часть 4. Сводная ведомость объемов работ',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:23,num:'10.1',section:'Раздел 10. Иная документация...',part:'Часть 1. Очистка местности от взрывоопасных предметов',book:'',code:'ДП-2025-1246-ПТС1.1-ВОП',name:'Часть 1. Очистка местности от взрывоопасных предметов',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}},
+    {id:24,num:'10.2.1',section:'Раздел 10. Иная документация...',part:'Часть 2. Технический отчет по результатам археологических...',book:'Книга 1. Текстовая часть. Альбом иллюстраций (1-136)',code:'ДП-2025-1246-ПТС1.1-АРХ1',name:'Книга 1. Текстовая часть. Альбом иллюстраций (1-136)',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}},
+    {id:25,num:'10.2.2',section:'Раздел 10. Иная документация...',part:'Часть 2. Технический отчет по результатам археологических...',book:'Книга 2. Альбом иллюстраций (362-817)',code:'ДП-2025-1246-ПТС1.1-АРХ2',name:'Книга 2. Альбом иллюстраций (362-817)',devs:[{n:'Савельев',s:' Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:26,num:'10.3.1',section:'Раздел 10. Иная документация...',part:'Часть 3. Отчетная документация по результатам...',book:'Книга 1. Отчет об оценке... до ПК222+000',code:'ДП-2025-1246-ПТС1.1-ЗКР1',name:'Книга 1. Отчет об оценке рыночной стоимости... до ПК222+000',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}},
+    {id:27,num:'10.3.2',section:'Раздел 10. Иная документация...',part:'Часть 3. Отчетная документация по результатам...',book:'Книга 2. Отчет об оценке... от ПК252+000',code:'ДП-2025-1246-ПТС1.1-ЗКР2',name:'Книга 2. Отчет об оценке рыночной стоимости... от ПК252+000',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:28,num:'10.3.3',section:'Раздел 10. Иная документация...',part:'Часть 3. Отчетная документация по результатам...',book:'Книга 3. Отчет об оценке... лесного фонда',code:'ДП-2025-1246-ПТС1.1-ЗКР3',name:'Книга 3. Отчет об оценке рыночной стоимости... лесного фонда',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}}
   ];
   showUI();
-  alert('Демо загружено', 'ok');
+  alert('✅ Демо-данные загружены (28 томов из вашего проекта)', 'ok');
   applyGlobal();
 }
 
+// === ПРИМЕНИТЬ ПОДПИСАНТОВ ===
 function applyGlobal() {
   data.sign = {
     check: document.getElementById('check').value.trim(),
     norm: document.getElementById('norm').value.trim()
   };
-  data.vols.forEach(v => {
-    if(!v.check.n && data.sign.check) v.check.n = data.sign.check;
-    if(!v.norm.n && data.sign.norm) v.norm.n = data.sign.norm;
+  data.vols.forEach(function(v) {
+    if (!v.check.n && data.sign.check) v.check.n = data.sign.check;
+    if (!v.norm.n && data.sign.norm) v.norm.n = data.sign.norm;
   });
   render();
   save();
 }
 
+// === ОТРИСОВКА ТАБЛИЦЫ ===
 function render() {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
   const filter = document.getElementById('filter').value;
   const search = document.getElementById('search').value.toLowerCase();
   
-  data.vols.forEach((v, idx) => {
-    if(search && !v.code.toLowerCase().includes(search) && !v.name.toLowerCase().includes(search)) return;
+  data.vols.forEach(function(v, idx) {
+    // Фильтр поиска
+    if (search && !v.code.toLowerCase().includes(search) && !v.name.toLowerCase().includes(search)) return;
     
-    if(filter !== 'all') {
+    // Фильтр статуса
+    if (filter !== 'all') {
       const all = v.devs.concat([v.check, v.norm]);
-      const wait = all.some(r => r.s === '⏳ Ожидает' && r.n);
-      const done = all.every(r => !r.n || r.s === '✅ Подписан' || r.s === '➖ Н/Т');
-      if(filter === 'wait' && !wait) return;
-      if(filter === 'done' && !done) return;
+      const wait = all.some(function(r) { return r.s === '⏳ Ожидает' && r.n; });
+      const done = all.every(function(r) { return !r.n || r.s === '✅ Подписан' || r.s === '➖ Н/Т'; });
+      if (filter === 'wait' && !wait) return;
+      if (filter === 'done' && !done) return;
     }
     
     const tr = document.createElement('tr');
     
-    // Раздел
+    // Формируем текст раздела/части/книги
     const sectionText = v.section + (v.part ? ' / ' + v.part : '') + (v.book ? ' / ' + v.book : '');
     
     // Разработчики (динамические)
     let devsHtml = '';
-    v.devs.forEach((d, i) => {
+    v.devs.forEach(function(d, i) {
       const cls = d.s === '✅ Подписан' ? 'status-done' : d.s === '🔄 Доработка' ? 'status-rev' : d.s === '➖ Н/Т' ? 'status-na' : 'status-wait';
       devsHtml += '<div class="signatory-box">' +
         '<input class="signatory-input" value="' + (d.n||'') + '" placeholder="ФИО" onchange="updateDevName(' + idx + ',' + i + ',this.value)">' +
@@ -304,7 +437,7 @@ function render() {
       '</div>';
     
     // Н. контр.
-    const normCls = v.norm.s === '✅ Подписан' ? 'status-done' : v.norm.s === ' Доработка' ? 'status-rev' : v.norm.s === '➖ Н/Т' ? 'status-na' : 'status-wait';
+    const normCls = v.norm.s === '✅ Подписан' ? 'status-done' : v.norm.s === '🔄 Доработка' ? 'status-rev' : v.norm.s === '➖ Н/Т' ? 'status-na' : 'status-wait';
     const normHtml = '<div class="signatory-box">' +
       '<input class="signatory-input" value="' + (v.norm.n||'') + '" placeholder="ФИО" onchange="updateName(' + idx + ',\'norm\',this.value)">' +
       '<button class="status-btn ' + normCls + '" onclick="cycle(' + idx + ',\'norm\')">' + v.norm.s + '</button>' +
@@ -313,12 +446,12 @@ function render() {
     
     // Итог
     const all = v.devs.concat([v.check, v.norm]);
-    const filled = all.filter(r => r.n);
-    const done = filled.every(r => r.s === '✅ Подписан' || r.s === '➖ Н/Т');
+    const filled = all.filter(function(r) { return r.n; });
+    const done = filled.every(function(r) { return r.s === '✅ Подписан' || r.s === '➖ Н/Т'; });
     const badge = done && filled.length > 0 ? '<span class="badge badge-ok">✅</span>' : '<span class="badge badge-wait">⏳</span>';
     
     tr.innerHTML = '<td>' + v.num + '</td>' +
-      '<td style="font-size:11px;color:#64748b">' + sectionText + '</td>' +
+      '<td style="font-size:11px;color:#64748b;max-width:200px">' + sectionText + '</td>' +
       '<td><span class="code">' + v.code + '</span></td>' +
       '<td>' + v.name + '</td>' +
       '<td>' + devsHtml + '</td>' +
@@ -332,6 +465,7 @@ function render() {
   updateStats();
 }
 
+// === ОБНОВЛЕНИЕ ИМЕН ===
 function updateDevName(volIdx, devIdx, val) {
   data.vols[volIdx].devs[devIdx].n = val.trim();
   save();
@@ -342,10 +476,11 @@ function updateName(idx, role, val) {
   save();
 }
 
+// === ПЕРЕКЛЮЧЕНИЕ СТАТУСОВ ===
 function cycleDev(idx, devIdx) {
   const target = data.vols[idx].devs[devIdx];
   const i = STATUSES.indexOf(target.s);
-  target.s = STATUSES[(i+1) % STATUSES.length];
+  target.s = STATUSES[(i + 1) % STATUSES.length];
   target.d = target.s === '✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : '';
   save();
   render();
@@ -354,74 +489,107 @@ function cycleDev(idx, devIdx) {
 function cycle(idx, role) {
   const target = data.vols[idx][role];
   const i = STATUSES.indexOf(target.s);
-  target.s = STATUSES[(i+1) % STATUSES.length];
+  target.s = STATUSES[(i + 1) % STATUSES.length];
   target.d = target.s === '✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : '';
   save();
   render();
 }
 
+// === ДОБАВИТЬ РАЗРАБОТЧИКА ===
 function addDev(idx) {
-  data.vols[idx].devs.push({n:'', s:'⏳ Ожидает', d:''});
+  data.vols[idx].devs.push({ n: '', s: '⏳ Ожидает', d: '' });
   save();
   render();
 }
 
+// === СТАТИСТИКА ===
 function updateStats() {
   const total = data.vols.length;
   let done = 0, wait = 0, roles = 0, signed = 0;
-  data.vols.forEach(v => {
+  data.vols.forEach(function(v) {
     const all = v.devs.concat([v.check, v.norm]);
-    const filled = all.filter(r => r.n && r.s !== '➖ Н/Т');
-    if(filled.every(r => r.s === '✅ Подписан')) done++;
+    const filled = all.filter(function(r) { return r.n && r.s !== '➖ Н/Т'; });
+    if (filled.every(function(r) { return r.s === '✅ Подписан'; })) done++;
     else wait++;
     roles += filled.length;
-    signed += filled.filter(r => r.s === '✅ Подписан').length;
+    signed += filled.filter(function(r) { return r.s === '✅ Подписан'; }).length;
   });
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statDone').textContent = done;
   document.getElementById('statWait').textContent = wait;
-  document.getElementById('statPct').textContent = roles ? Math.round(signed/roles*100) + '%' : '0%';
+  document.getElementById('statPct').textContent = roles ? Math.round(signed / roles * 100) + '%' : '0%';
 }
 
-function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
+// === СОХРАНЕНИЕ / ЗАГРУЗКА ===
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+
 function load() {
   const s = localStorage.getItem(KEY);
-  if(s) {
+  if (s) {
     try {
       data = JSON.parse(s);
-      if(data.vols.length > 0) {
+      if (data.vols.length > 0) {
         document.getElementById('check').value = data.sign.check || '';
         document.getElementById('norm').value = data.sign.norm || '';
         showUI();
         render();
       }
-    } catch(e) {}
+    } catch (e) {
+      console.error('Ошибка загрузки:', e);
+    }
   }
 }
 
+// === ЭКСПОРТ JSON ===
 function exportData() {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'трекер_' + new Date().toISOString().slice(0,10) + '.json';
+  a.download = 'трекер_эп_' + new Date().toISOString().slice(0, 10) + '.json';
   a.click();
+  alert('Данные сохранены', 'ok');
 }
 
+// === ИМПОРТ JSON ===
 function importData(input) {
   const file = input.files[0];
-  if(!file) return;
+  if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = function(e) {
     try {
       data = JSON.parse(e.target.result);
       save();
       showUI();
       render();
-      alert('Загружено', 'ok');
-    } catch(err) { alert('Ошибка', 'err'); }
+      alert('Данные загружены', 'ok');
+    } catch (err) {
+      alert('Ошибка чтения файла: ' + err.message, 'err');
+    }
   };
   reader.readAsText(file);
   input.value = '';
+}
+
+// === ЭКСПОРТ CSV ===
+function exportCSV() {
+  const rows = [['№', 'Раздел/Часть/Книга', 'Обозначение', 'Наименование', 'Разработчики', 'Проверил', 'Н.контр', 'Итог']];
+  data.vols.forEach(function(v) {
+    const sectionText = v.section + (v.part ? ' / ' + v.part : '') + (v.book ? ' / ' + v.book : '');
+    const devsText = v.devs.map(function(d) { return d.n + ' (' + d.s + ')'; }).join(', ');
+    const all = v.devs.concat([v.check, v.norm]);
+    const filled = all.filter(function(r) { return r.n; });
+    const done = filled.every(function(r) { return r.s === '✅ Подписан' || r.s === ' Н/Т'; });
+    rows.push([v.num, sectionText, v.code, v.name, devsText, v.check.n + ' (' + v.check.s + ')', v.norm.n + ' (' + v.norm.s + ')', done ? '✅' : '⏳']);
+  });
+  const csv = rows.map(function(r) { return r.map(function(c) { return '"' + (c || '').replace(/"/g, '""') + '"'; }).join(';'); }).join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'трекер_эп_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  alert('Экспортировано в CSV', 'ok');
 }
 </script>
 </body>
