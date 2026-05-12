@@ -3,277 +3,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Трекер ЭП v3.3 | Для вашего формата</title>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+  <title>Трекер ЭП v4.0</title>
   <style>
-    :root { --primary:#4f46e5; --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --bg:#f1f5f9; --card:#fff; --text:#1e293b; --border:#cbd5e1; }
+    :root { --primary:#4f46e5; --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --bg:#f8fafc; --card:#fff; --text:#1e293b; --border:#e2e8f0; }
     * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); padding:20px; line-height:1.5; }
-    .container { max-width:1400px; margin:0 auto; }
-    header { text-align:center; margin-bottom:25px; }
-    header h1 { font-size:24px; margin-bottom:5px; }
-    header p { color:#64748b; font-size:14px; }
-    .card { background:var(--card); border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
-    .upload-zone { border:2px dashed var(--border); border-radius:12px; padding:40px 20px; text-align:center; cursor:pointer; transition:0.2s; }
-    .upload-zone:hover { border-color:var(--primary); background:#eff6ff; }
-    .upload-zone input { display:none; }
-    .btn { padding:8px 16px; border:none; border-radius:8px; cursor:pointer; font-weight:500; margin:5px; }
+    body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); padding:20px; }
+    .container { max-width:1600px; margin:0 auto; }
+    header { text-align:center; margin-bottom:20px; }
+    h1 { font-size:22px; margin-bottom:5px; }
+    .card { background:var(--card); border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+    .upload { border:2px dashed var(--border); border-radius:10px; padding:30px; text-align:center; cursor:pointer; }
+    .upload:hover { border-color:var(--primary); background:#f0f9ff; }
+    .upload input { display:none; }
+    .btn { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-weight:500; margin:3px; font-size:13px; }
     .btn-primary { background:var(--primary); color:#fff; }
     .btn-outline { background:transparent; border:1px solid var(--border); }
-    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px; margin-bottom:20px; }
-    .stat { background:var(--card); padding:15px; border-radius:10px; text-align:center; }
-    .stat-value { font-size:28px; font-weight:700; color:var(--primary); }
-    .stat-label { font-size:12px; color:#64748b; }
-    .filters { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
-    .search { flex:1; min-width:250px; padding:10px 15px; border:1px solid var(--border); border-radius:8px; }
-    table { width:100%; border-collapse:collapse; font-size:13px; background:var(--card); border-radius:10px; overflow:hidden; }
-    th { background:#f8fafc; padding:12px; text-align:left; font-weight:600; color:#475569; }
-    td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+    .btn-add { background:var(--success); color:#fff; width:24px; height:24px; border-radius:50%; padding:0; font-size:16px; line-height:1; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:15px; }
+    .stat { background:var(--card); padding:12px; border-radius:8px; text-align:center; }
+    .stat-val { font-size:24px; font-weight:700; color:var(--primary); }
+    .stat-label { font-size:11px; color:#64748b; }
+    .filters { display:flex; gap:10px; margin-bottom:10px; }
+    .search { flex:1; padding:8px 12px; border:1px solid var(--border); border-radius:6px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; background:var(--card); }
+    th { background:#f1f5f9; padding:10px; text-align:left; font-weight:600; color:#475569; border-bottom:2px solid var(--border); }
+    td { padding:8px; border-bottom:1px solid var(--border); vertical-align:top; }
     tr:hover { background:#f8fafc; }
-    .code { font-family:monospace; background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:11px; display:inline-block; max-width:250px; word-break:break-all; }
-    .status { display:inline-flex; align-items:center; justify-content:center; padding:4px 10px; border-radius:15px; font-size:11px; font-weight:600; cursor:pointer; margin:2px 0; width:100%; }
+    .section-row { background:#f0f9ff !important; cursor:pointer; }
+    .section-row td { font-weight:600; color:var(--primary); padding:8px 10px; }
+    .code { font-family:monospace; background:#f1f5f9; padding:3px 6px; border-radius:4px; font-size:11px; }
+    .signatory-box { margin-bottom:4px; }
+    .signatory-input { width:100%; padding:4px 6px; border:1px solid var(--border); border-radius:4px; font-size:12px; margin-bottom:2px; }
+    .status-btn { display:flex; align-items:center; justify-content:center; gap:4px; padding:4px 8px; border-radius:12px; font-size:11px; font-weight:600; cursor:pointer; width:100%; border:none; }
     .status-wait { background:#fef3c7; color:#92400e; }
     .status-done { background:#dcfce7; color:#166534; }
     .status-rev { background:#fee2e2; color:#991b1b; }
     .status-na { background:#f1f5f9; color:#475569; }
-    .badge { padding:4px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+    .add-btn { width:20px; height:20px; border-radius:50%; border:1px dashed var(--border); background:transparent; cursor:pointer; font-size:14px; color:var(--success); display:flex; align-items:center; justify-content:center; margin:2px auto; }
+    .add-btn:hover { background:#dcfce7; border-color:var(--success); }
+    .badge { padding:3px 8px; border-radius:10px; font-size:10px; font-weight:600; }
     .badge-ok { background:var(--success); color:#fff; }
     .badge-wait { background:var(--warning); color:#fff; }
-    .section { background:#f8fafc; cursor:pointer; font-weight:600; color:var(--primary); }
     .hidden { display:none !important; }
-    .alert { padding:12px; border-radius:8px; margin-bottom:15px; }
-    .alert-ok { background:#dcfce7; color:#166534; border:1px solid #86efac; }
-    .alert-err { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
-    .debug { background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:10px; font-size:11px; font-family:monospace; max-height:200px; overflow:auto; display:none; margin-bottom:15px; }
-    @media(max-width:768px) { .filters { flex-direction:column; } .search { width:100%; } }
+    .alert { padding:10px; border-radius:6px; margin-bottom:10px; font-size:13px; }
+    .alert-ok { background:#dcfce7; color:#166534; }
+    .alert-err { background:#fee2e2; color:#991b1b; }
+    @media(max-width:1024px) { table { font-size:12px; } .stats { grid-template-columns:repeat(2,1fr); } }
   </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>📑 Трекер ЭП v3.3</h1>
-    <p>Работает с вашим форматом (пробелы в кодах)</p>
+    <h1>📑 Трекер ЭП v4.0</h1>
+    <p style="color:#64748b;font-size:13px">Структура: Раздел → Часть → Книга | Динамические исполнители</p>
   </header>
 
   <div id="alerts"></div>
-  <div id="debug" class="debug"></div>
 
   <div class="card">
-    <div class="upload-zone" id="dropZone">
-      <div style="font-size:32px;margin-bottom:10px;">📥</div>
-      <div style="font-weight:600;margin-bottom:5px;">Перетащите файл или нажмите</div>
-      <div style="font-size:12px;color:#64748b;">Поддерживается: .xlsx, .csv, .txt</div>
+    <div class="upload" id="dropZone">
+      <div style="font-size:28px;margin-bottom:8px">📥</div>
+      <div style="font-weight:600">Перетащите файл или нажмите</div>
+      <div style="font-size:12px;color:#64748b">.xlsx, .csv, .txt</div>
       <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt">
     </div>
   </div>
 
   <div class="card hidden" id="signatoryCard">
-    <div style="font-weight:600;margin-bottom:15px;">👥 Подписанты проекта</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:15px;">
-      <div><label style="font-size:11px;color:#64748b">Разработал 1</label><br><input type="text" id="dev1" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px" value="Савельев"></div>
-      <div><label style="font-size:11px;color:#64748b">Разработал 2</label><br><input type="text" id="dev2" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px"></div>
-      <div><label style="font-size:11px;color:#64748b">Разработал 3</label><br><input type="text" id="dev3" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px"></div>
-      <div><label style="font-size:11px;color:#64748b">Проверил</label><br><input type="text" id="check" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px" value="Вахрушев"></div>
-      <div><label style="font-size:11px;color:#64748b">Н. контр.</label><br><input type="text" id="norm" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px" value="Шанина"></div>
+    <div style="font-weight:600;margin-bottom:10px">👥 Подписанты проекта</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px">
+      <div><label style="font-size:11px;color:#64748b">Проверил</label><br><input type="text" id="check" value="Вахрушев" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px"></div>
+      <div><label style="font-size:11px;color:#64748b">Н. контр.</label><br><input type="text" id="norm" value="Шанина" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px"></div>
     </div>
-    <div>
-      <button class="btn btn-primary" onclick="applyGlobal()">✅ Применить ко всем</button>
-      <button class="btn btn-outline" onclick="exportData()">💾 Сохранить (JSON)</button>
-      <button class="btn btn-outline" onclick="document.getElementById('importInput').click()">📂 Загрузить</button>
-      <button class="btn btn-outline" onclick="toggleDebug()">🔍 Диагностика</button>
-      <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(this)">
-    </div>
+    <button class="btn btn-primary" onclick="applyGlobal()">✅ Применить</button>
+    <button class="btn btn-outline" onclick="exportData()">💾 Сохранить</button>
+    <button class="btn btn-outline" onclick="document.getElementById('importInput').click()">📂 Загрузить</button>
+    <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(this)">
   </div>
 
   <div class="stats hidden" id="stats">
-    <div class="stat"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Всего томов</div></div>
-    <div class="stat"><div class="stat-value" style="color:var(--success)" id="statDone">0</div><div class="stat-label">✅ Готово</div></div>
-    <div class="stat"><div class="stat-value" style="color:var(--warning)" id="statWait">0</div><div class="stat-label">⏳ В работе</div></div>
-    <div class="stat"><div class="stat-value" id="statPct">0%</div><div class="stat-label">Прогресс</div></div>
+    <div class="stat"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Всего</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--success)" id="statDone">0</div><div class="stat-label">Готово</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--warning)" id="statWait">0</div><div class="stat-label">В работе</div></div>
+    <div class="stat"><div class="stat-val" id="statPct">0%</div><div class="stat-label">Прогресс</div></div>
   </div>
 
   <div class="filters hidden" id="filters">
     <input type="text" class="search" id="search" placeholder="🔍 Поиск..." oninput="render()">
-    <select id="filter" onchange="render()" style="padding:10px;border:1px solid var(--border);border-radius:8px">
-      <option value="all">Все статусы</option>
-      <option value="wait">⏳ В работе</option>
+    <select id="filter" onchange="render()" style="padding:8px;border:1px solid var(--border);border-radius:6px">
+      <option value="all">Все</option>
+      <option value="wait"> В работе</option>
       <option value="done">✅ Готово</option>
-      <option value="rev">🔄 Доработка</option>
     </select>
   </div>
 
   <div class="card hidden" id="tableCard">
     <div style="overflow-x:auto">
       <table id="tbl">
-        <thead><tr><th>№</th><th>Обозначение</th><th>Наименование</th><th style="min-width:120px">Разр.1</th><th style="min-width:120px">Разр.2</th><th style="min-width:120px">Разр.3</th><th style="min-width:120px">Проверил</th><th style="min-width:120px">Н.контр</th><th>Итог</th></tr></thead>
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Раздел</th>
+            <th>Обозначение</th>
+            <th>Наименование</th>
+            <th style="min-width:140px">Разработал</th>
+            <th style="min-width:120px">Проверил</th>
+            <th style="min-width:120px">Н. контр.</th>
+            <th>Итог</th>
+          </tr>
+        </thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
   </div>
 
   <div class="card" id="empty">
-    <div style="text-align:center;padding:40px;color:#64748b">
-      <div style="font-size:48px;margin-bottom:15px">📂</div>
-      <div style="font-weight:600;margin-bottom:10px">Загрузите файл</div>
-      <button class="btn btn-primary" onclick="loadDemo()">🔹 Демо-данные</button>
+    <div style="text-align:center;padding:30px;color:#64748b">
+      <div style="font-size:40px;margin-bottom:10px">📂</div>
+      <div style="font-weight:600;margin-bottom:8px">Загрузите файл</div>
+      <button class="btn btn-primary" onclick="loadDemo()">🔹 Демо</button>
     </div>
   </div>
 </div>
 
 <script>
-let data = { vols: [], sign: { devs: ['', '', ''], check: '', norm: '' } };
-const KEY = 'ep_tracker_v33';
+let data = { vols: [], sign: { check: '', norm: '' } };
+const KEY = 'ep_tracker_v4';
 const STATUSES = ['⏳ Ожидает', '✅ Подписан', '🔄 Доработка', '➖ Н/Т'];
 
-function log(msg) {
-  const d = document.getElementById('debug');
-  d.innerHTML += '<div>[' + new Date().toLocaleTimeString() + '] ' + msg + '</div>';
-  d.scrollTop = d.scrollHeight;
-  console.log(msg);
-}
-
-function toggleDebug() {
-  const d = document.getElementById('debug');
-  d.style.display = d.style.display === 'block' ? 'none' : 'block';
-}
-
 function alert(msg, type) {
-  const c = document.getElementById('alerts');
-  c.innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
-  setTimeout(function() { c.innerHTML = ''; }, 5000);
+  document.getElementById('alerts').innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
+  setTimeout(() => document.getElementById('alerts').innerHTML = '', 4000);
 }
 
-window.onload = function() { load(); setupUpload(); log('✓ Готов'); };
+window.onload = () => { load(); setupUpload(); };
 
 function setupUpload() {
   const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
-  dz.onclick = function() { fi.click(); };
-  dz.ondragover = function(e) { e.preventDefault(); dz.style.borderColor = '#4f46e5'; dz.style.background = '#eff6ff'; };
-  dz.ondragleave = function() { dz.style.borderColor = ''; dz.style.background = ''; };
-  dz.ondrop = function(e) { e.preventDefault(); dz.style.borderColor = ''; dz.style.background = ''; if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
-  fi.onchange = function() { if (fi.files[0]) handleFile(fi.files[0]); };
+  dz.onclick = () => fi.click();
+  dz.ondragover = e => { e.preventDefault(); dz.style.borderColor = 'var(--primary)'; };
+  dz.ondragleave = () => dz.style.borderColor = '';
+  dz.ondrop = e => { e.preventDefault(); dz.style.borderColor = ''; if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+  fi.onchange = () => { if(fi.files[0]) handleFile(fi.files[0]); };
 }
 
 function handleFile(file) {
-  log('Файл: ' + file.name);
   const ext = file.name.split('.').pop().toLowerCase();
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = e => {
     try {
-      if (ext === 'xlsx' || ext === 'xls') {
-        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-        const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
-        parseData(json);
+      if(ext === 'xlsx' || ext === 'xls') {
+        const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+        parseRows(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''}));
       } else {
-        const text = e.target.result;
-        const lines = text.split(/\r?\n/).filter(function(l) { return l.trim(); });
-        const sep = lines[0].includes('\t') ? '\t' : lines[0].includes(';') ? ';' : ',';
-        const headers = lines[0].split(sep).map(function(h) { return h.trim().toLowerCase(); });
-        const map = {};
-        headers.forEach(function(h, i) {
-          if (h.includes('№') || h.includes('п/п')) map.num = i;
-          if (h.includes('обозначение') || h.includes('код')) map.code = i;
-          if (h.includes('наименование') || h.includes('название')) map.name = i;
-        });
-        parseLines(lines.slice(1), sep, map);
+        parseCSV(e.target.result);
       }
-    } catch (err) {
-      log('✗ Ошибка: ' + err.message);
-      alert('Ошибка: ' + err.message, 'err');
-    }
+    } catch(err) { alert('Ошибка: ' + err.message, 'err'); }
   };
-  if (ext === 'xlsx' || ext === 'xls') reader.readAsArrayBuffer(file);
-  else reader.readAsText(file);
+  ext === 'xlsx' || ext === 'xls' ? reader.readAsArrayBuffer(file) : reader.readAsText(file);
 }
 
-function parseLines(lines, sep, map) {
-  log('Строк: ' + lines.length);
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if(lines.length < 2) { alert('Пустой файл', 'err'); return; }
+  const sep = lines[0].includes('\t') ? '\t' : lines[0].includes(';') ? ';' : ',';
+  const rows = lines.slice(1).map(l => l.split(sep).map(c => c.trim().replace(/^"|"$/g, '')));
+  parseRows(rows);
+}
+
+function parseRows(rows) {
   const vols = [];
-  let idx = 1, section = '';
+  let idx = 1, section = '', part = '', book = '';
   
-  lines.forEach(function(line, i) {
-    const cells = line.split(sep).map(function(c) { return c.trim().replace(/^"|"$/g, ''); });
-    if (!cells[0] && !cells[1] && !cells[2]) return;
+  rows.forEach(r => {
+    // Обработка в разных форматах
+    const num = r[0] || r['№ п/п'] || '';
+    const code = r[2] || r['Обозначение'] || '';
+    const name = r[3] || r['Наименование'] || '';
     
-    const text = cells.join('|').toLowerCase();
-    if (text.includes('изм.') || text.includes('подп.') || text.includes('дата') || text.includes('лист') || text.includes('разработал')) return;
+    if(!num && !code && !name) return;
     
-    if (text.match(/раздел\s*\d+/)) {
-      section = cells.find(function(c) { return c.match(/раздел/i); }) || '';
-      log('Раздел: ' + section);
+    const text = (num + '|' + code + '|' + name).toLowerCase();
+    
+    // Пропускаем служебные строки
+    if(text.includes('изм.') || text.includes('подп.') || text.includes('дата') || text.includes('лист') || text.includes('стадия')) return;
+    
+    // Определяем иерархию
+    if(text.match(/раздел\s+\d+/)) {
+      section = (r[3] || name).trim();
+      part = ''; book = '';
+      return;
+    }
+    if(text.match(/часть\s+\d+/) && !text.includes('книга')) {
+      part = (r[3] || name).trim();
+      book = '';
+      return;
+    }
+    if(text.match(/книга\s+\d+/)) {
+      book = (r[3] || name).trim();
       return;
     }
     
-    // ГИБКИЙ ПОИСК КОДА - понимает пробелы!
-    let code = null, codeIdx = -1;
-    for (let j = 0; j < cells.length; j++) {
-      const c = cells[j].replace(/\s+/g, ''); // Убираем пробелы для проверки
-      if (c.match(/дп-\d{4}-\d+-птс/i)) {
-        code = cells[j]; // Сохраняем оригинал с пробелами
-        codeIdx = j;
-        break;
-      }
-    }
-    
-    if (code) {
+    // Ищем код тома
+    const codeClean = code.replace(/\s+/g, '');
+    if(codeClean.match(/дп-\d{4}-\d+-птс/i)) {
       const cleanCode = code.replace(/\s+/g, '').replace(/-с\s*п$/i, '-СП');
-      let name = '';
-      for (let j = codeIdx + 1; j < cells.length; j++) {
-        if (cells[j].length > 10 && !cells[j].match(/раздел/i)) { name = cells[j]; break; }
-      }
-      if (!name && map.name >= 0) name = cells[map.name] || '';
-      
       vols.push({
-        id: idx++, num: cells[map.num] || String(idx), section: section,
-        code: cleanCode, name: name || 'Без названия',
-        devs: [{n:'',s:'⏳ Ожидает',d:''}, {n:'',s:'⏳ Ожидает',d:''}, {n:'',s:'⏳ Ожидает',d:''}],
-        check: {n:'',s:'⏳ Ожидает',d:''}, norm: {n:'',s:'⏳ Ожидает',d:''}
+        id: idx++,
+        num: num || String(idx),
+        section, part, book,
+        code: cleanCode,
+        name: name || 'Без названия',
+        devs: [{n:'', s:'⏳ Ожидает', d:''}],
+        check: {n:'', s:'⏳ Ожидает', d:''},
+        norm: {n:'', s:'⏳ Ожидает', d:''}
       });
-      log('✓ Том: ' + cleanCode);
     }
   });
   
-  if (vols.length === 0) { alert('Тома не найдены. Проверьте файл.', 'err'); return; }
-  
-  data.vols = vols;
-  showUI();
-  alert('Загружено ' + vols.length + ' томов', 'ok');
-  applyGlobal();
-}
-
-function parseData(rows) {
-  log('Строк Excel: ' + rows.length);
-  if (!rows || rows.length === 0) { alert('Пустой файл', 'err'); return; }
-  
-  const headers = Object.keys(rows[0] || {});
-  const map = {};
-  headers.forEach(function(h) {
-    const hl = h.toLowerCase();
-    if (hl.includes('№') || hl.includes('п/п')) map.num = h;
-    if (hl.includes('обозначение') || hl.includes('код')) map.code = h;
-    if (hl.includes('наименование') || hl.includes('название')) map.name = h;
-  });
-  
-  const vols = [];
-  let idx = 1, section = '';
-  
-  rows.forEach(function(r) {
-    const codeRaw = String(r[map.code] || '');
-    const code = codeRaw.replace(/\s+/g, '');
-    if (!code.match(/дп-\d{4}-\d+-птс/i)) return;
-    
-    const cleanCode = code.replace(/-с\s*п$/i, '-СП');
-    const name = String(r[map.name] || '');
-    
-    vols.push({
-      id: idx++, num: String(r[map.num] || ''), section: section,
-      code: cleanCode, name: name,
-      devs: [{n:'',s:'⏳ Ожидает',d:''}, {n:'',s:'⏳ Ожидает',d:''}, {n:'',s:'⏳ Ожидает',d:''}],
-      check: {n:'',s:'⏳ Ожидает',d:''}, norm: {n:'',s:'⏳ Ожидает',d:''}
-    });
-  });
-  
-  if (vols.length === 0) { alert('Тома не найдены', 'err'); return; }
+  if(vols.length === 0) { alert('Тома не найдены', 'err'); return; }
   
   data.vols = vols;
   showUI();
@@ -291,8 +239,9 @@ function showUI() {
 
 function loadDemo() {
   data.vols = [
-    {id:1,num:'1.1',section:'',code:'ДП-2025-1246-ПТС1.1-ПЗ1',name:'Часть 1. Общая пояснительная записка',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''},{n:'',s:'⏳ Ожидает',d:''},{n:'',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
-    {id:2,num:'2.1',section:'Раздел 2',code:'ДП-2025-1246-ПТС1.1-ППО1',name:'Часть 1. Текстовая часть',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''},{n:'',s:'⏳ Ожидает',d:''},{n:'',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}}
+    {id:1,num:'1.1',section:'Раздел 1',part:'Часть 1',book:'',code:'ДП-2025-1246-ПТС1.1-ПЗ1',name:'Общая пояснительная записка',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:' Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:2,num:'2.1',section:'Раздел 2',part:'Часть 1',book:'',code:'ДП-2025-1246-ПТС1.1-ППО1',name:'Текстовая часть',devs:[{n:'Савельев',s:' Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:'⏳ Ожидает',d:''}},
+    {id:3,num:'2.2.1',section:'Раздел 2',part:'Часть 2',book:'Книга 1',code:'ДП-2025-1246-ПТС1.1-ППО2.1',name:'Участок 1 ПК 0 – ПК 295',devs:[{n:'Савельев',s:'⏳ Ожидает',d:''}],check:{n:'Вахрушев',s:'⏳ Ожидает',d:''},norm:{n:'Шанина',s:' Ожидает',d:''}}
   ];
   showUI();
   alert('Демо загружено', 'ok');
@@ -301,14 +250,12 @@ function loadDemo() {
 
 function applyGlobal() {
   data.sign = {
-    devs: [document.getElementById('dev1').value.trim(), document.getElementById('dev2').value.trim(), document.getElementById('dev3').value.trim()],
     check: document.getElementById('check').value.trim(),
     norm: document.getElementById('norm').value.trim()
   };
-  data.vols.forEach(function(v) {
-    v.devs.forEach(function(d, i) { if (!d.n && data.sign.devs[i]) d.n = data.sign.devs[i]; });
-    if (!v.check.n && data.sign.check) v.check.n = data.sign.check;
-    if (!v.norm.n && data.sign.norm) v.norm.n = data.sign.norm;
+  data.vols.forEach(v => {
+    if(!v.check.n && data.sign.check) v.check.n = data.sign.check;
+    if(!v.norm.n && data.sign.norm) v.norm.n = data.sign.norm;
   });
   render();
   save();
@@ -319,64 +266,84 @@ function render() {
   tbody.innerHTML = '';
   const filter = document.getElementById('filter').value;
   const search = document.getElementById('search').value.toLowerCase();
-  let curSec = '';
   
-  data.vols.forEach(function(v, idx) {
-    if (search && !v.code.toLowerCase().includes(search) && !v.name.toLowerCase().includes(search)) return;
-    if (filter !== 'all') {
-      const all = v.devs.concat([v.check, v.norm]);
-      const wait = all.some(function(r) { return r.s === '⏳ Ожидает' && r.n; });
-      const rev = all.some(function(r) { return r.s === '🔄 Доработка'; });
-      const done = all.every(function(r) { return !r.n || r.s === '✅ Подписан' || r.s === '➖ Н/Т'; });
-      if (filter === 'wait' && !wait) return;
-      if (filter === 'done' && !done) return;
-      if (filter === 'rev' && !rev) return;
-    }
+  data.vols.forEach((v, idx) => {
+    if(search && !v.code.toLowerCase().includes(search) && !v.name.toLowerCase().includes(search)) return;
     
-    if (v.section && v.section !== curSec) {
-      curSec = v.section;
-      const tr = document.createElement('tr');
-      tr.className = 'section';
-      tr.innerHTML = '<td colspan="9">▶ ' + curSec + '</td>';
-      tr.onclick = function() {
-        let n = tr.nextElementSibling;
-        while (n && !n.classList.contains('section')) { n.style.display = n.style.display === 'none' ? '' : 'none'; n = n.nextElementSibling; }
-      };
-      tbody.appendChild(tr);
+    if(filter !== 'all') {
+      const all = v.devs.concat([v.check, v.norm]);
+      const wait = all.some(r => r.s === '⏳ Ожидает' && r.n);
+      const done = all.every(r => !r.n || r.s === '✅ Подписан' || r.s === '➖ Н/Т');
+      if(filter === 'wait' && !wait) return;
+      if(filter === 'done' && !done) return;
     }
     
     const tr = document.createElement('tr');
+    
+    // Раздел
+    const sectionText = v.section + (v.part ? ' / ' + v.part : '') + (v.book ? ' / ' + v.book : '');
+    
+    // Разработчики (динамические)
     let devsHtml = '';
-    v.devs.forEach(function(d, i) {
+    v.devs.forEach((d, i) => {
       const cls = d.s === '✅ Подписан' ? 'status-done' : d.s === '🔄 Доработка' ? 'status-rev' : d.s === '➖ Н/Т' ? 'status-na' : 'status-wait';
-      devsHtml += '<div style="min-width:100px"><input type="text" value="' + (d.n||'') + '" placeholder="ФИО" style="width:100%;padding:4px;border:1px solid var(--border);border-radius:4px;font-size:11px;margin-bottom:3px" onchange="updateName(' + idx + ',\'dev\',' + i + ',this.value)"><button class="status ' + cls + '" onclick="cycle(' + idx + ',\'dev\',' + i + ')">' + d.s + '</button><div style="font-size:10px;color:#64748b;text-align:center">' + (d.d||'') + '</div></div>';
+      devsHtml += '<div class="signatory-box">' +
+        '<input class="signatory-input" value="' + (d.n||'') + '" placeholder="ФИО" onchange="updateDevName(' + idx + ',' + i + ',this.value)">' +
+        '<button class="status-btn ' + cls + '" onclick="cycleDev(' + idx + ',' + i + ')">' + d.s + '</button>' +
+        '<div style="font-size:9px;color:#94a3b8;text-align:center">' + (d.d||'') + '</div>' +
+        '</div>';
     });
+    devsHtml += '<button class="add-btn" onclick="addDev(' + idx + ')" title="Добавить разработчика">+</button>';
     
+    // Проверил
+    const checkCls = v.check.s === '✅ Подписан' ? 'status-done' : v.check.s === '🔄 Доработка' ? 'status-rev' : v.check.s === '➖ Н/Т' ? 'status-na' : 'status-wait';
+    const checkHtml = '<div class="signatory-box">' +
+      '<input class="signatory-input" value="' + (v.check.n||'') + '" placeholder="ФИО" onchange="updateName(' + idx + ',\'check\',this.value)">' +
+      '<button class="status-btn ' + checkCls + '" onclick="cycle(' + idx + ',\'check\')">' + v.check.s + '</button>' +
+      '<div style="font-size:9px;color:#94a3b8;text-align:center">' + (v.check.d||'') + '</div>' +
+      '</div>';
+    
+    // Н. контр.
+    const normCls = v.norm.s === '✅ Подписан' ? 'status-done' : v.norm.s === ' Доработка' ? 'status-rev' : v.norm.s === '➖ Н/Т' ? 'status-na' : 'status-wait';
+    const normHtml = '<div class="signatory-box">' +
+      '<input class="signatory-input" value="' + (v.norm.n||'') + '" placeholder="ФИО" onchange="updateName(' + idx + ',\'norm\',this.value)">' +
+      '<button class="status-btn ' + normCls + '" onclick="cycle(' + idx + ',\'norm\')">' + v.norm.s + '</button>' +
+      '<div style="font-size:9px;color:#94a3b8;text-align:center">' + (v.norm.d||'') + '</div>' +
+      '</div>';
+    
+    // Итог
     const all = v.devs.concat([v.check, v.norm]);
-    const filled = all.filter(function(r) { return r.n; });
-    const done = filled.every(function(r) { return r.s === '✅ Подписан' || r.s === '➖ Н/Т'; });
-    const rev = all.some(function(r) { return r.s === '🔄 Доработка'; });
-    const badge = done ? '<span class="badge badge-ok">✅</span>' : rev ? '<span class="badge" style="background:#ef4444;color:#fff">🔄</span>' : '<span class="badge badge-wait">⏳</span>';
+    const filled = all.filter(r => r.n);
+    const done = filled.every(r => r.s === '✅ Подписан' || r.s === '➖ Н/Т');
+    const badge = done && filled.length > 0 ? '<span class="badge badge-ok">✅</span>' : '<span class="badge badge-wait">⏳</span>';
     
-    tr.innerHTML = '<td>' + v.num + '</td><td><span class="code">' + (v.code||'—') + '</span></td><td>' + v.name + '</td><td>' + devsHtml + '</td><td>' + roleCell(v.check, idx, 'check') + '</td><td>' + roleCell(v.norm, idx, 'norm') + '</td><td>' + badge + '</td>';
+    tr.innerHTML = '<td>' + v.num + '</td>' +
+      '<td style="font-size:11px;color:#64748b">' + sectionText + '</td>' +
+      '<td><span class="code">' + v.code + '</span></td>' +
+      '<td>' + v.name + '</td>' +
+      '<td>' + devsHtml + '</td>' +
+      '<td>' + checkHtml + '</td>' +
+      '<td>' + normHtml + '</td>' +
+      '<td>' + badge + '</td>';
+    
     tbody.appendChild(tr);
   });
+  
   updateStats();
 }
 
-function roleCell(r, idx, role) {
-  const cls = r.s === '✅ Подписан' ? 'status-done' : r.s === '🔄 Доработка' ? 'status-rev' : r.s === '➖ Н/Т' ? 'status-na' : 'status-wait';
-  return '<div style="min-width:100px"><input type="text" value="' + (r.n||'') + '" placeholder="ФИО" style="width:100%;padding:4px;border:1px solid var(--border);border-radius:4px;font-size:11px;margin-bottom:3px" onchange="updateName(' + idx + ',\'' + role + '\',0,this.value)"><button class="status ' + cls + '" onclick="cycle(' + idx + ',\'' + role + '\',0)">' + r.s + '</button><div style="font-size:10px;color:#64748b;text-align:center">' + (r.d||'') + '</div></div>';
-}
-
-function updateName(idx, role, devIdx, val) {
-  if (role === 'dev') data.vols[idx].devs[devIdx].n = val.trim();
-  else data.vols[idx][role].n = val.trim();
+function updateDevName(volIdx, devIdx, val) {
+  data.vols[volIdx].devs[devIdx].n = val.trim();
   save();
 }
 
-function cycle(idx, role, devIdx) {
-  const target = role === 'dev' ? data.vols[idx].devs[devIdx] : data.vols[idx][role];
+function updateName(idx, role, val) {
+  data.vols[idx][role].n = val.trim();
+  save();
+}
+
+function cycleDev(idx, devIdx) {
+  const target = data.vols[idx].devs[devIdx];
   const i = STATUSES.indexOf(target.s);
   target.s = STATUSES[(i+1) % STATUSES.length];
   target.d = target.s === '✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : '';
@@ -384,16 +351,31 @@ function cycle(idx, role, devIdx) {
   render();
 }
 
+function cycle(idx, role) {
+  const target = data.vols[idx][role];
+  const i = STATUSES.indexOf(target.s);
+  target.s = STATUSES[(i+1) % STATUSES.length];
+  target.d = target.s === '✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : '';
+  save();
+  render();
+}
+
+function addDev(idx) {
+  data.vols[idx].devs.push({n:'', s:'⏳ Ожидает', d:''});
+  save();
+  render();
+}
+
 function updateStats() {
   const total = data.vols.length;
   let done = 0, wait = 0, roles = 0, signed = 0;
-  data.vols.forEach(function(v) {
+  data.vols.forEach(v => {
     const all = v.devs.concat([v.check, v.norm]);
-    const filled = all.filter(function(r) { return r.n && r.s !== '➖ Н/Т'; });
-    if (filled.every(function(r) { return r.s === '✅ Подписан'; })) done++;
+    const filled = all.filter(r => r.n && r.s !== '➖ Н/Т');
+    if(filled.every(r => r.s === '✅ Подписан')) done++;
     else wait++;
     roles += filled.length;
-    signed += filled.filter(function(r) { return r.s === '✅ Подписан'; }).length;
+    signed += filled.filter(r => r.s === '✅ Подписан').length;
   });
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statDone').textContent = done;
@@ -404,62 +386,42 @@ function updateStats() {
 function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
 function load() {
   const s = localStorage.getItem(KEY);
-  if (s) {
+  if(s) {
     try {
       data = JSON.parse(s);
-      if (data.vols.length > 0) {
-        document.getElementById('dev1').value = data.sign.devs[0] || '';
+      if(data.vols.length > 0) {
         document.getElementById('check').value = data.sign.check || '';
         document.getElementById('norm').value = data.sign.norm || '';
         showUI();
         render();
-        log('✓ Загружено из памяти');
       }
-    } catch (e) { log('✗ Ошибка: ' + e.message); }
+    } catch(e) {}
   }
 }
 
 function exportData() {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'трекер_эп_' + new Date().toISOString().slice(0,10) + '.json';
+  a.download = 'трекер_' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
 }
 
 function importData(input) {
   const file = input.files[0];
-  if (!file) return;
+  if(!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = e => {
     try {
       data = JSON.parse(e.target.result);
       save();
       showUI();
       render();
       alert('Загружено', 'ok');
-    } catch (err) { alert('Ошибка: ' + err.message, 'err'); }
+    } catch(err) { alert('Ошибка', 'err'); }
   };
   reader.readAsText(file);
   input.value = '';
-}
-
-function exportCSV() {
-  const rows = [['№','Код','Название','Разр.1','Статус1','Разр.2','Статус2','Разр.3','Статус3','Проверил','СтатусП','Н.контр','СтатусН','Итог']];
-  data.vols.forEach(function(v) {
-    const all = v.devs.concat([v.check, v.norm]);
-    const done = all.filter(function(r) { return r.n; }).every(function(r) { return r.s === '✅ Подписан' || r.s === '➖ Н/Т'; });
-    const row = [v.num, v.code, v.name];
-    v.devs.forEach(function(d) { row.push(d.n, d.s); });
-    row.push(v.check.n, v.check.s, v.norm.n, v.norm.s, done ? '✅' : '⏳');
-    rows.push(row);
-  });
-  const csv = rows.map(function(r) { return r.map(function(c) { return '"' + (c||'').replace(/"/g,'""') + '"'; }).join(';'); }).join('\n');
-  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'трекер_эп_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
 }
 </script>
 </body>
