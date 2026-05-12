@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Трекер ЭП | Состав проектной документации</title>
-  <!-- Библиотека для чтения Excel -->
+  <title>Трекер ЭП v2.0 | Состав проектной документации</title>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
-  <!-- Библиотека для чтения Word (.docx) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     :root { --primary: #2563eb; --primary-hover: #1d4ed8; --success: #16a34a; --warning: #ca8a04; --danger: #dc2626; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a; --muted: #64748b; }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.4; }
-    .container { max-width: 1500px; margin: 0 auto; }
+    .container { max-width: 1600px; margin: 0 auto; }
     header { text-align: center; margin-bottom: 30px; }
     header h1 { margin: 0 0 8px; font-size: 28px; }
     header p { color: var(--muted); margin: 0; font-size: 14px; }
@@ -22,13 +21,14 @@
     .controls { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; background: var(--card); padding: 15px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; }
     .input-group { display: flex; flex-direction: column; gap: 5px; }
     .input-group label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    input[type="text"], select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 180px; }
+    input[type="text"], select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 200px; }
     input[type="text"]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
     button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.2s; }
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
     .btn-outline:hover { background: #f1f5f9; color: var(--text); }
+    .btn-small { padding: 4px 10px; font-size: 12px; }
     .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
     .stat-card { background: var(--card); padding: 18px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center; }
     .stat-value { font-size: 26px; font-weight: 700; color: var(--primary); }
@@ -38,31 +38,42 @@
     .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; }
     .search-input { flex: 1; min-width: 250px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
     .table-wrapper { background: var(--card); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
     th { background: #f8fafc; font-weight: 600; color: #475569; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
     tr:hover { background: #fafafa; }
     .num-cell { color: var(--muted); width: 40px; text-align: center; }
-    .code-cell { font-family: ui-monospace, monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; display: inline-block; font-size: 13px; max-width: 300px; word-break: break-all; }
-    .status-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; user-select: none; border: 1px solid transparent; transition: 0.15s; }
+    .code-cell { font-family: ui-monospace, monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; display: inline-block; font-size: 12px; max-width: 250px; word-break: break-all; }
+    .status-btn { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 15px; font-size: 11px; font-weight: 500; cursor: pointer; user-select: none; border: 1px solid transparent; transition: 0.15s; margin-bottom: 3px; }
     .status-btn:hover { transform: scale(1.05); }
     .status-pending { background: #fef3c7; color: #92400e; border-color: #fde68a; }
     .status-signed { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
     .status-revision { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
-    .date-cell { color: var(--muted); font-size: 12px; margin-top: 4px; }
-    .overall-badge { padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 12px; text-align: center; white-space: nowrap; }
+    .date-cell { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .signatory-input { width: 100%; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; margin-bottom: 3px; }
+    .pdf-upload-btn { background: #f1f5f9; border: 1px dashed var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; color: var(--muted); text-align: center; margin-top: 4px; }
+    .pdf-upload-btn:hover { background: #e2e8f0; color: var(--text); }
+    .overall-badge { padding: 4px 10px; border-radius: 15px; font-weight: 600; font-size: 11px; text-align: center; white-space: nowrap; }
     .badge-pending { background: #e0e7ff; color: #3730a3; }
     .badge-signed { background: var(--success); color: white; }
+    .section-header { background: #f1f5f9; cursor: pointer; font-weight: 600; }
+    .section-header:hover { background: #e2e8f0; }
+    .section-toggle { margin-right: 8px; }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .hidden { display: none !important; }
+    .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .alert { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+    .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
     @media (max-width: 900px) { .controls { flex-direction: column; align-items: stretch; } .input-group, input[type="text"], select, .search-input { width: 100%; } table { display: block; } }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>📑 Трекер электронных подписей</h1>
-      <p>Поддерживаются .docx, .xlsx, .csv. Клик по статусу меняет состояние. Прогресс сохраняется автоматически.</p>
+      <h1>📑 Трекер электронных подписей v2.0</h1>
+      <p>Поддерживаются .docx, .xlsx, .csv + автоизвлечение из PDF штампов. Клик по статусу меняет состояние.</p>
     </header>
 
     <div class="upload-area" id="dropZone">
@@ -71,16 +82,18 @@
       <input type="file" id="fileInput" accept=".docx,.xlsx,.xls,.csv">
     </div>
 
+    <div id="alertContainer"></div>
+
     <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center;">
       <button class="btn-outline" onclick="loadDemo()">🔹 Демо-данные</button>
       <button class="btn-outline" onclick="clearAll()">🗑️ Очистить</button>
     </div>
 
-    <div class="controls hidden" id="signatoryPanel">
-      <div class="input-group"><label>Разработал</label><input type="text" id="devName" placeholder="Фамилия И.О."></div>
-      <div class="input-group"><label>Проверил</label><input type="text" id="checkName" placeholder="Фамилия И.О."></div>
-      <div class="input-group"><label>Н. контр.</label><input type="text" id="normName" placeholder="Фамилия И.О."></div>
-      <button class="btn-primary" onclick="applySignatories()">✅ Применить</button>
+    <div class="controls hidden" id="globalSignatoryPanel">
+      <div class="input-group"><label>Разработал (по умолчанию)</label><input type="text" id="devName" placeholder="Фамилия И.О."></div>
+      <div class="input-group"><label>Проверил (по умолчанию)</label><input type="text" id="checkName" placeholder="Фамилия И.О."></div>
+      <div class="input-group"><label>Н. контр. (по умолчанию)</label><input type="text" id="normName" placeholder="Фамилия И.О."></div>
+      <button class="btn-primary" onclick="applyGlobalSignatories()">✅ Применить ко всем</button>
       <button class="btn-outline" onclick="exportToExcel()" style="margin-left:auto;">💾 Экспорт в Excel</button>
     </div>
 
@@ -98,7 +111,7 @@
 
     <div class="table-wrapper">
       <table class="hidden" id="mainTable">
-        <thead><tr><th class="num-cell">№</th><th>Обозначение</th><th>Наименование</th><th id="colDev">Разработал</th><th id="colCheck">Проверил</th><th id="colNorm">Н. контр.</th><th>Итог</th></tr></thead>
+        <thead><tr><th class="num-cell">№</th><th>Обозначение</th><th>Наименование</th><th style="width:180px">Разработал</th><th style="width:180px">Проверил</th><th style="width:180px">Н. контр.</th><th>Итог</th></tr></thead>
         <tbody id="tableBody"></tbody>
       </table>
       <div class="empty-state" id="emptyState">📂 Загрузите .docx/.xlsx файл или нажмите «Демо-данные»</div>
@@ -106,11 +119,22 @@
   </div>
 
   <script>
-    let appData = { volumes: [], signatories: { dev: '', check: '', norm: '' } };
-    const STORAGE_KEY = 'ep_tracker_v1';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    let appData = { volumes: [], globalSignatories: { dev: '', check: '', norm: '' } };
+    const STORAGE_KEY = 'ep_tracker_v2';
     const STATUS_CYCLE = ['⏳ Ожидает', '✅ Подписан', '🔄 Доработка'];
 
     window.addEventListener('DOMContentLoaded', () => { loadFromStorage(); setupFileUpload(); });
+
+    function showAlert(message, type = 'error') {
+      const container = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.textContent = message;
+      container.innerHTML = '';
+      container.appendChild(alert);
+      setTimeout(() => alert.remove(), 5000);
+    }
 
     function setupFileUpload() {
       const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
@@ -124,13 +148,28 @@
     function handleFile(file) {
       const ext = file.name.split('.').pop().toLowerCase();
       if (!file) return;
-      document.querySelector('.upload-area p').textContent = `⏳ Чтение: ${file.name}...`;
+      const uploadText = document.querySelector('.upload-area p');
+      const originalText = uploadText.textContent;
+      uploadText.innerHTML = `<span class="loading"></span> Чтение: ${file.name}...`;
 
       if (ext === 'docx') {
         const reader = new FileReader();
-        reader.onload = e => mammoth.convertToHTML({arrayBuffer: e.target.result})
-          .then(res => parseDocxTable(res.value))
-          .catch(err => alert('Ошибка чтения DOCX: ' + err.message));
+        reader.onload = e => {
+          mammoth.convertToHTML({arrayBuffer: e.target.result})
+            .then(res => {
+              console.log('DOCX parsed:', res.value.substring(0, 200));
+              parseDocxTable(res.value);
+            })
+            .catch(err => {
+              console.error('DOCX error:', err);
+              showAlert('Ошибка чтения DOCX: ' + err.message);
+              uploadText.textContent = originalText;
+            });
+        };
+        reader.onerror = () => {
+          showAlert('Ошибка чтения файла');
+          uploadText.textContent = originalText;
+        };
         reader.readAsArrayBuffer(file);
       } else if (['xlsx','xls','csv'].includes(ext)) {
         const reader = new FileReader();
@@ -138,94 +177,394 @@
           try {
             const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
             const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+            console.log('Excel parsed:', json);
             parseAndLoad(json);
-          } catch(err) { alert('Ошибка Excel/CSV: ' + err.message); }
+          } catch(err) {
+            console.error('Excel error:', err);
+            showAlert('Ошибка Excel/CSV: ' + err.message);
+            uploadText.textContent = originalText;
+          }
         };
         reader.readAsArrayBuffer(file);
-      } else { alert('Поддерживаются только .docx, .xlsx, .csv'); }
+      } else {
+        showAlert('Поддерживаются только .docx, .xlsx, .csv');
+        uploadText.textContent = originalText;
+      }
     }
 
     function parseDocxTable(html) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const table = doc.querySelector('table');
-      if (!table) return alert('В документе не найдена таблица.');
+      
+      if (!table) {
+        showAlert('В документе не найдена таблица. Убедитесь, что состав проекта оформлен таблицей.');
+        return;
+      }
 
       const rows = table.querySelectorAll('tr');
       const volumes = [];
       let idx = 1;
+      let currentSection = '';
 
       rows.forEach(row => {
         const cells = Array.from(row.querySelectorAll('td, th')).map(c => c.textContent.trim().replace(/\s+/g, ' '));
+        if (cells.length < 2) return;
+
         const text = cells.join(' ').toLowerCase();
-        // Фильтр мусора и подвала
-        if (text.includes('изм.') || text.includes('разработал') || text.includes('проверил') || text.includes('н. контр.') || text.includes('состав проектной')) return;
-        if (!cells.some(c => c.includes('ДП-'))) return; // Берём только строки с обозначением тома
+        
+        // Skip headers and footers
+        if (text.includes('изм.') || text.includes('подп.') || text.includes('дата') || 
+            text.includes('разработал') && text.includes('проверил') || 
+            text.includes('н. контр.') || text.includes('состав проектной') ||
+            text.includes('лист') || text.includes('листов')) return;
 
-        const code = cells.find(c => c.includes('ДП-')) || '';
-        const codeIdx = cells.findIndex(c => c.includes('ДП-'));
-        let name = cells[codeIdx + 1] || cells.find(c => c.length > 10 && c !== code) || '';
-        let num = cells[0] || idx;
+        // Detect section headers
+        if (text.match(/раздел\s+\d+/) || text.match(/часть\s+\d+\./) && !text.includes('дп-')) {
+          currentSection = cells.find(c => c.match(/раздел|часть/i)) || '';
+          return;
+        }
 
-        volumes.push({ id: idx, code, name, dev: {status:'⏳ Ожидает',date:''}, check: {status:'⏳ Ожидает',date:''}, norm: {status:'⏳ Ожидает',date:''} });
-        idx++;
+        // Find rows with volume codes
+        const codeMatch = cells.find(c => c.match(/дп-\d{4}-\d+-птс/i));
+        if (!codeMatch) return;
+
+        const code = codeMatch.replace(/\s+/g, ''); // Remove all spaces
+        const codeIdx = cells.findIndex(c => c.includes('ДП-') || c.includes('дп-'));
+        
+        // Get number from first column or generate
+        let num = cells[0] || '';
+        if (!num.match(/^\d/)) num = '';
+        
+        // Get name - usually next cell after code or longest text cell
+        let name = '';
+        for (let i = codeIdx + 1; i < cells.length; i++) {
+          if (cells[i].length > 10 && cells[i] !== code) {
+            name = cells[i];
+            break;
+          }
+        }
+        if (!name) name = cells.find(c => c.length > 15 && c !== code) || '';
+
+        if (code && name) {
+          volumes.push({
+            id: idx,
+            num: num || String(idx),
+            section: currentSection,
+            code: code,
+            name: name.trim(),
+            dev: { status: '⏳ Ожидает', date: '', name: '' },
+            check: { status: '⏳ Ожидает', date: '', name: '' },
+            norm: { status: '⏳ Ожидает', date: '', name: '' },
+            pdfFile: null
+          });
+          idx++;
+        }
       });
 
-      if (volumes.length === 0) return alert('Не найдены тома. Убедитесь, что в таблице есть обозначения вида "ДП-...".');
+      if (volumes.length === 0) {
+        showAlert('Не найдены тома с обозначениями ДП-... Проверьте формат таблицы.');
+        return;
+      }
+
       appData.volumes = volumes;
-      document.getElementById('signatoryPanel').classList.remove('hidden');
+      document.getElementById('globalSignatoryPanel').classList.remove('hidden');
       document.getElementById('devName').value = 'Савельев';
       document.getElementById('checkName').value = 'Вахрушев';
       document.getElementById('normName').value = 'Шанина';
-      document.querySelector('.upload-area p').textContent = '✅ Данные загружены';
-      applySignatories();
+      document.querySelector('.upload-area p').textContent = `✅ Загружено томов: ${volumes.length}`;
+      showAlert(`Успешно загружено ${volumes.length} томов`, 'success');
+      applyGlobalSignatories();
     }
 
     function parseAndLoad(rows) {
       const headers = Object.keys(rows[0] || {});
       const map = {};
-      const keywords = { code: ['обозначение','код','марка','номер тома'], name: ['наименование','название','раздел','том'] };
-      headers.forEach(h => { const c = h.toLowerCase().replace(/[^а-яёa-z0-9]/g,''); for(const [k,w] of Object.entries(keywords)) if(w.some(s=>c.includes(s))) map[k]=h; });
+      const keywords = { 
+        num: ['№', 'п/п', 'номер'],
+        code: ['обозначение', 'код', 'марка'], 
+        name: ['наименование', 'название', 'раздел', 'том'] 
+      };
+      
+      headers.forEach(h => { 
+        const c = h.toLowerCase().replace(/[^а-яёa-z0-9]/g,''); 
+        for(const [k,w] of Object.entries(keywords)) {
+          if(w.some(s=>c.includes(s))) map[k]=h; 
+        } 
+      });
 
-      const volumes = rows.map((r, i) => ({ id: i+1, code: String(r[map.code]||'').trim(), name: String(r[map.name]||'').trim(), dev:{status:'⏳ Ожидает',date:''}, check:{status:'⏳ Ожидает',date:''}, norm:{status:'⏳ Ожидает',date:''} }))
-                          .filter(v => v.code || v.name);
-      if (!volumes.length) return alert('Не найдены данные. Проверьте заголовки таблицы.');
+      const volumes = rows.map((r, i) => {
+        const code = String(r[map.code]||'').trim().replace(/\s+/g, '');
+        const name = String(r[map.name]||'').trim();
+        const num = String(r[map.num]||'').trim();
+        if (!code && !name) return null;
+        return {
+          id: i+1,
+          num: num || String(i+1),
+          section: '',
+          code: code,
+          name: name,
+          dev:{status:'⏳ Ожидает',date:'',name:''}, 
+          check:{status:'⏳ Ожидает',date:'',name:''}, 
+          norm:{status:'⏳ Ожидает',date:'',name:''},
+          pdfFile: null
+        };
+      }).filter(v => v && (v.code || v.name));
+
+      if (!volumes.length) {
+        showAlert('Не найдены данные. Проверьте заголовки таблицы (должны быть: №, Обозначение, Наименование).');
+        return;
+      }
+
       appData.volumes = volumes;
-      document.getElementById('signatoryPanel').classList.remove('hidden');
-      document.getElementById('devName').value = 'Савельев'; document.getElementById('checkName').value = 'Вахрушев'; document.getElementById('normName').value = 'Шанина';
-      applySignatories();
+      document.getElementById('globalSignatoryPanel').classList.remove('hidden');
+      document.getElementById('devName').value = 'Савельев'; 
+      document.getElementById('checkName').value = 'Вахрушев'; 
+      document.getElementById('normName').value = 'Шанина';
+      showAlert(`Успешно загружено ${volumes.length} томов`, 'success');
+      applyGlobalSignatories();
     }
 
-    function applySignatories() {
-      appData.signatories = { dev: document.getElementById('devName').value.trim()||'Разработал', check: document.getElementById('checkName').value.trim()||'Проверил', norm: document.getElementById('normName').value.trim()||'Н. контр.' };
-      document.getElementById('colDev').innerHTML = `Разработал<br><small style="color:#64748b;font-weight:normal">${appData.signatories.dev}</small>`;
-      document.getElementById('colCheck').innerHTML = `Проверил<br><small style="color:#64748b;font-weight:normal">${appData.signatories.check}</small>`;
-      document.getElementById('colNorm').innerHTML = `Н. контр.<br><small style="color:#64748b;font-weight:normal">${appData.signatories.norm}</small>`;
-      document.getElementById('mainTable').classList.remove('hidden'); document.getElementById('dashboard').classList.remove('hidden'); document.getElementById('filtersPanel').classList.remove('hidden'); document.getElementById('emptyState').classList.add('hidden');
+    function applyGlobalSignatories() {
+      appData.globalSignatories = { 
+        dev: document.getElementById('devName').value.trim()||'Разработал', 
+        check: document.getElementById('checkName').value.trim()||'Проверил', 
+        norm: document.getElementById('normName').value.trim()||'Н. контр.' 
+      };
+      
+      // Apply to volumes that don't have individual names set
+      appData.volumes.forEach(v => {
+        if (!v.dev.name) v.dev.name = appData.globalSignatories.dev;
+        if (!v.check.name) v.check.name = appData.globalSignatories.check;
+        if (!v.norm.name) v.norm.name = appData.globalSignatories.norm;
+      });
+      
+      document.getElementById('mainTable').classList.remove('hidden'); 
+      document.getElementById('dashboard').classList.remove('hidden'); 
+      document.getElementById('filtersPanel').classList.remove('hidden'); 
+      document.getElementById('emptyState').classList.add('hidden');
       renderTable();
     }
 
     function renderTable() {
-      const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
-      const filter = document.getElementById('filterStatus').value, search = document.getElementById('searchInput').value.toLowerCase();
+      const tbody = document.getElementById('tableBody'); 
+      tbody.innerHTML = '';
+      const filter = document.getElementById('filterStatus').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      
+      let currentSection = '';
+      
       appData.volumes.forEach((v, idx) => {
+        // Filter
         if (search && !v.code.toLowerCase().includes(search) && !v.name.toLowerCase().includes(search)) return;
-        if (filter !== 'all') { const r=[v.dev,v.check,v.norm]; const pend=r.some(s=>s.status==='⏳ Ожидает'), rev=r.some(s=>s.status==='🔄 Доработка'); if(filter==='pending'&&!pend) return; if(filter==='signed'&&pend) return; if(filter==='revision'&&!rev) return; }
+        if (filter !== 'all') { 
+          const r=[v.dev,v.check,v.norm]; 
+          const pend=r.some(s=>s.status==='⏳ Ожидает'); 
+          const rev=r.some(s=>s.status==='🔄 Доработка'); 
+          if(filter==='pending'&&!pend) return; 
+          if(filter==='signed'&&pend) return; 
+          if(filter==='revision'&&!rev) return; 
+        }
+
+        // Section header
+        if (v.section && v.section !== currentSection) {
+          currentSection = v.section;
+          const tr = document.createElement('tr');
+          tr.className = 'section-header';
+          tr.innerHTML = `<td colspan="7"><span class="section-toggle">▶</span>${currentSection}</td>`;
+          tr.onclick = (e) => {
+            if (e.target.classList.contains('section-toggle')) {
+              const toggle = e.target;
+              let next = toggle.closest('tr').nextElementSibling;
+              while (next && !next.classList.contains('section-header')) {
+                next.style.display = next.style.display === 'none' ? '' : 'none';
+                next = next.nextElementSibling;
+              }
+              toggle.textContent = toggle.textContent === '▶' ? '▼' : '▶';
+            }
+          };
+          tbody.appendChild(tr);
+        }
+
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="num-cell">${v.id}</td><td><span class="code-cell">${v.code||'—'}</span></td><td>${v.name||'—'}</td><td>${sCell(v.dev,idx,'dev')}</td><td>${sCell(v.check,idx,'check')}</td><td>${sCell(v.norm,idx,'norm')}</td><td>${badge(v)}</td>`;
+        tr.innerHTML = `
+          <td class="num-cell">${v.num}</td>
+          <td><span class="code-cell">${v.code||'—'}</span></td>
+          <td>${v.name||'—'}</td>
+          <td>${signatoryCell(v.dev, idx, 'dev')}</td>
+          <td>${signatoryCell(v.check, idx, 'check')}</td>
+          <td>${signatoryCell(v.norm, idx, 'norm')}</td>
+          <td>${overallBadge(v)}</td>
+        `;
         tbody.appendChild(tr);
-      }); updateDashboard();
+      }); 
+      updateDashboard();
     }
 
-    function sCell(st, i, r) { const c = st.status.includes('Ожидает')?'status-pending':st.status.includes('Подписан')?'status-signed':'status-revision'; return `<div style="display:inline-block;width:100%"><span class="status-btn ${c}" onclick="cycle(${i},'${r}')">${st.status}</span><div class="date-cell">${st.date||''}</div></div>`; }
-    function cycle(i, r) { const s = appData.volumes[i][r], ni = (STATUS_CYCLE.indexOf(s.status)+1)%3; s.status=STATUS_CYCLE[ni]; s.date = s.status==='✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : ''; save(); renderTable(); }
-    function badge(v) { const all=[v.dev,v.check,v.norm].every(s=>s.status==='✅ Подписан'), rev=[v.dev,v.check,v.norm].some(s=>s.status==='🔄 Доработка'); return all?'<span class="overall-badge badge-signed">✅ Готово</span>':rev?'<span class="overall-badge" style="background:#fee2e2;color:#991b1b">🔄 Доработка</span>':'<span class="overall-badge badge-pending">⏳ В работе</span>'; }
-    function updateDashboard() { const t=appData.volumes.length; if(!t) return; let s=0,p=0,sr=0,tr=0; appData.volumes.forEach(v=>{const r=[v.dev,v.check,v.norm]; if(r.every(x=>x.status==='✅ Подписан'))s++; else p++; r.forEach(x=>{tr++;if(x.status==='✅ Подписан')sr++});}); document.getElementById('statTotal').textContent=t; document.getElementById('statSigned').textContent=s; document.getElementById('statPending').textContent=p; const pct=Math.round((sr/tr)*100); document.getElementById('statProgress').textContent=pct+'%'; document.getElementById('progressBar').style.width=pct+'%'; }
-    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); }
-    function loadFromStorage() { const d=localStorage.getItem(STORAGE_KEY); if(d){try{appData=JSON.parse(d);document.getElementById('devName').value=appData.signatories.dev||'Савельев';document.getElementById('checkName').value=appData.signatories.check||'Вахрушев';document.getElementById('normName').value=appData.signatories.norm||'Шанина';if(appData.volumes.length)applySignatories();}catch(e){}} }
-    function clearAll() { if(confirm('Очистить все данные?')){localStorage.removeItem(STORAGE_KEY);location.reload();} }
-    function loadDemo() { parseAndLoad([{"Обозначение":"ДП-2025-1246-ПТС1.1-ПЗ1","Наименование":"Часть 1. Общая пояснительная записка"},{"Обозначение":"ДП-2025-1246-ПТС1.1-ППО1","Наименование":"Часть 1. Текстовая часть"},{"Обозначение":"ДП-2025-1246-ПТС1.1-ТКР1","Наименование":"Часть 1. Текстовая часть"}]); }
-    function exportToExcel() { const d=appData.volumes.map(v=>({"№":v.id,"Обозначение":v.code,"Наименование":v.name,"Разработал":v.dev.status,"Дата Р":v.dev.date,"Проверил":v.check.status,"Дата П":v.check.date,"Н. контр":v.norm.status,"Дата Н":v.norm.date})); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d), "Трекер ЭП"); XLSX.writeFile(wb, `Трекер_ЭП_${new Date().toISOString().slice(0,10)}.xlsx`); }
+    function signatoryCell(state, rowIdx, role) {
+      const statusClass = state.status.includes('Ожидает') ? 'status-pending' : 
+                          state.status.includes('Подписан') ? 'status-signed' : 'status-revision';
+      return `
+        <input type="text" class="signatory-input" value="${state.name||''}" placeholder="${role==='dev'?'Разработал':role==='check'?'Проверил':'Н. контр.'}" onchange="updateSignatory(${rowIdx}, '${role}', this.value)">
+        <span class="status-btn ${statusClass}" onclick="cycleStatus(${rowIdx}, '${role}')">${state.status}</span>
+        <div class="date-cell">${state.date||''}</div>
+        <div class="pdf-upload-btn" onclick="document.getElementById('pdfInput_${rowIdx}_${role}').click()">📎 PDF штамп</div>
+        <input type="file" id="pdfInput_${rowIdx}_${role}" style="display:none" accept=".pdf" onchange="extractFromPDF(${rowIdx}, '${role}', this)">
+      `;
+    }
+
+    function updateSignatory(idx, role, value) {
+      appData.volumes[idx][role].name = value.trim();
+      saveToStorage();
+    }
+
+    async function extractFromPDF(rowIdx, role, input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+        
+        let extractedText = '';
+        // Extract text from first 3 pages (stamps usually on first or last)
+        for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          extractedText += textContent.items.map(item => item.str).join(' ');
+        }
+
+        // Also check last page
+        const lastPage = await pdf.getPage(pdf.numPages);
+        const lastText = await lastPage.getTextContent();
+        extractedText += ' ' + lastText.items.map(item => item.str).join(' ');
+
+        // Search for patterns like "Разработал: Фамилия" or just "Фамилия" near role keywords
+        const patterns = {
+          'dev': /(?:разработал|разр)[:\s]+([а-яё]+\s*[а-яё\.]*)/i,
+          'check': /(?:проверил|пр)[:\s]+([а-яё]+\s*[а-яё\.]*)/i,
+          'norm': /(?:н\.\s*контр|нормоконтр)[:\s]+([а-яё]+\s*[а-яё\.]*)/i
+        };
+
+        const match = extractedText.match(patterns[role]);
+        if (match && match[1]) {
+          const name = match[1].trim().replace(/\s+/g, ' ');
+          appData.volumes[rowIdx][role].name = name;
+          appData.volumes[rowIdx][role].status = '✅ Подписан';
+          appData.volumes[rowIdx][role].date = new Date().toLocaleDateString('ru-RU');
+          showAlert(`Извлечено из PDF: ${name}`, 'success');
+          saveToStorage();
+          renderTable();
+        } else {
+          // Try to find any Cyrillic name (2+ words)
+          const nameMatch = extractedText.match(/([а-яё]{3,}\s+[а-яё\.]{3,})/i);
+          if (nameMatch) {
+            const name = nameMatch[1].trim();
+            if (confirm(`Найдено: "${name}". Использовать?`)) {
+              appData.volumes[rowIdx][role].name = name;
+              appData.volumes[rowIdx][role].status = '✅ Подписан';
+              appData.volumes[rowIdx][role].date = new Date().toLocaleDateString('ru-RU');
+              saveToStorage();
+              renderTable();
+            }
+          } else {
+            showAlert('Не удалось автоматически найти фамилию в PDF. Попробуйте другой файл.', 'error');
+          }
+        }
+      } catch (err) {
+        console.error('PDF extraction error:', err);
+        showAlert('Ошибка чтения PDF: ' + err.message, 'error');
+      }
+    }
+
+    function cycleStatus(idx, role) { 
+      const s = appData.volumes[idx][role]; 
+      const ni = (STATUS_CYCLE.indexOf(s.status)+1)%3; 
+      s.status=STATUS_CYCLE[ni]; 
+      s.date = s.status==='✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : ''; 
+      saveToStorage(); 
+      renderTable(); 
+    }
+
+    function overallBadge(v) { 
+      const all=[v.dev,v.check,v.norm].every(s=>s.status==='✅ Подписан'); 
+      const rev=[v.dev,v.check,v.norm].some(s=>s.status==='🔄 Доработка'); 
+      return all?'<span class="overall-badge badge-signed">✅ Готово</span>':rev?'<span class="overall-badge" style="background:#fee2e2;color:#991b1b">🔄 Доработка</span>':'<span class="overall-badge badge-pending">⏳ В работе</span>'; 
+    }
+
+    function updateDashboard() { 
+      const t=appData.volumes.length; 
+      if(!t) return; 
+      let s=0,p=0,sr=0,tr=0; 
+      appData.volumes.forEach(v=>{
+        const r=[v.dev,v.check,v.norm]; 
+        if(r.every(x=>x.status==='✅ Подписан'))s++; 
+        else p++; 
+        r.forEach(x=>{tr++;if(x.status==='✅ Подписан')sr++});
+      }); 
+      document.getElementById('statTotal').textContent=t; 
+      document.getElementById('statSigned').textContent=s; 
+      document.getElementById('statPending').textContent=p; 
+      const pct=Math.round((sr/tr)*100); 
+      document.getElementById('statProgress').textContent=pct+'%'; 
+      document.getElementById('progressBar').style.width=pct+'%'; 
+    }
+
+    function saveToStorage() { 
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); 
+    }
+
+    function loadFromStorage() { 
+      const d=localStorage.getItem(STORAGE_KEY); 
+      if(d){
+        try{
+          appData=JSON.parse(d);
+          document.getElementById('devName').value=appData.globalSignatories.dev||'Савельев';
+          document.getElementById('checkName').value=appData.globalSignatories.check||'Вахрушев';
+          document.getElementById('normName').value=appData.globalSignatories.norm||'Шанина';
+          if(appData.volumes.length){
+            document.getElementById('globalSignatoryPanel').classList.remove('hidden');
+            applyGlobalSignatories();
+          }
+        }catch(e){console.error('Load error:',e);}
+      } 
+    }
+
+    function clearAll() { 
+      if(confirm('Очистить все данные?')){
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      } 
+    }
+
+    function loadDemo() { 
+      parseAndLoad([
+        {"№":"1.1","Обозначение":"ДП-2025-1246-ПТС1.1-ПЗ1","Наименование":"Часть 1. Общая пояснительная записка"},
+        {"№":"2.1","Обозначение":"ДП-2025-1246-ПТС1.1-ППО1","Наименование":"Часть 1. Текстовая часть"},
+        {"№":"2.2.1","Обозначение":"ДП-2025-1246-ПТС1.1-ППО2.1","Наименование":"Книга 1. Участок 1 ПК 0 – ПК 295"}
+      ]); 
+    }
+
+    function exportToExcel() { 
+      const d=appData.volumes.map(v=>({
+        "№":v.num,
+        "Обозначение":v.code,
+        "Наименование":v.name,
+        "Раздел":v.section,
+        "Разработал":v.dev.name,
+        "Статус Р":v.dev.status,
+        "Дата Р":v.dev.date,
+        "Проверил":v.check.name,
+        "Статус П":v.check.status,
+        "Дата П":v.check.date,
+        "Н. контр":v.norm.name,
+        "Статус Н":v.norm.status,
+        "Дата Н":v.norm.date
+      })); 
+      const wb=XLSX.utils.book_new(); 
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d), "Трекер ЭП"); 
+      XLSX.writeFile(wb, `Трекер_ЭП_${new Date().toISOString().slice(0,10)}.xlsx`); 
+    }
   </script>
 </body>
 </html>
