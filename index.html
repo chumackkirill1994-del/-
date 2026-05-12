@@ -3,137 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Трекер ЭП v2.0 | Состав проектной документации</title>
+  <title>Трекер ЭП v2.2 | До 3 разработчиков</title>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
-    :root { --primary: #2563eb; --primary-hover: #1d4ed8; --success: #16a34a; --warning: #ca8a04; --danger: #dc2626; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a; --muted: #64748b; }
+    :root { --primary: #2563eb; --primary-hover: #1d4ed8; --success: #16a34a; --warning: #ca8a04; --danger: #dc2626; --info: #0ea5e9; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a; --muted: #64748b; }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.4; }
-    .container { max-width: 1600px; margin: 0 auto; }
-    header { text-align: center; margin-bottom: 30px; }
-    header h1 { margin: 0 0 8px; font-size: 28px; }
+    .container { max-width: 1800px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 25px; }
+    header h1 { margin: 0 0 8px; font-size: 26px; }
     header p { color: var(--muted); margin: 0; font-size: 14px; }
-    .upload-area { border: 2px dashed var(--border); padding: 40px 20px; text-align: center; border-radius: 12px; background: var(--card); cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
+    .upload-area { border: 2px dashed var(--border); padding: 35px 20px; text-align: center; border-radius: 12px; background: var(--card); cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
     .upload-area:hover, .upload-area.dragover { border-color: var(--primary); background: #eff6ff; }
     .upload-area input { display: none; }
-    .controls { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; background: var(--card); padding: 15px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; background: var(--card); padding: 15px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; }
     .input-group { display: flex; flex-direction: column; gap: 5px; }
-    .input-group label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    input[type="text"], select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 200px; }
+    .input-group label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    input[type="text"], select { padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; width: 160px; }
     input[type="text"]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-    button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.2s; }
+    button { padding: 7px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: 0.2s; }
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
     .btn-outline:hover { background: #f1f5f9; color: var(--text); }
-    .btn-small { padding: 4px 10px; font-size: 12px; }
-    .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-    .stat-card { background: var(--card); padding: 18px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center; }
-    .stat-value { font-size: 26px; font-weight: 700; color: var(--primary); }
-    .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
-    .progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-top: 8px; }
+    .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: var(--card); padding: 15px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 700; color: var(--primary); }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .progress-bar { height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-top: 6px; }
     .progress-fill { height: 100%; background: var(--primary); transition: width 0.4s ease; }
     .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; }
-    .search-input { flex: 1; min-width: 250px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    .search-input { flex: 1; min-width: 250px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
     .table-wrapper { background: var(--card); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
     th { background: #f8fafc; font-weight: 600; color: #475569; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
     tr:hover { background: #fafafa; }
-    .num-cell { color: var(--muted); width: 40px; text-align: center; }
-    .code-cell { font-family: ui-monospace, monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; display: inline-block; font-size: 12px; max-width: 250px; word-break: break-all; }
-    .status-btn { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 15px; font-size: 11px; font-weight: 500; cursor: pointer; user-select: none; border: 1px solid transparent; transition: 0.15s; margin-bottom: 3px; }
-    .status-btn:hover { transform: scale(1.05); }
+    .num-cell { color: var(--muted); width: 35px; text-align: center; }
+    .code-cell { font-family: ui-monospace, monospace; background: #f1f5f9; padding: 3px 6px; border-radius: 4px; display: inline-block; font-size: 11px; max-width: 200px; word-break: break-all; }
+    .role-cell { min-width: 140px; vertical-align: top; }
+    .status-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 12px; font-size: 11px; font-weight: 500; cursor: pointer; user-select: none; border: 1px solid transparent; transition: 0.15s; margin-bottom: 2px; width: 100%; justify-content: center; }
+    .status-btn:hover { transform: scale(1.03); }
     .status-pending { background: #fef3c7; color: #92400e; border-color: #fde68a; }
     .status-signed { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
     .status-revision { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
-    .date-cell { color: var(--muted); font-size: 11px; margin-top: 2px; }
-    .signatory-input { width: 100%; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; margin-bottom: 3px; }
-    .pdf-upload-btn { background: #f1f5f9; border: 1px dashed var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; color: var(--muted); text-align: center; margin-top: 4px; }
-    .pdf-upload-btn:hover { background: #e2e8f0; color: var(--text); }
-    .overall-badge { padding: 4px 10px; border-radius: 15px; font-weight: 600; font-size: 11px; text-align: center; white-space: nowrap; }
+    .status-na { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    .date-cell { color: var(--muted); font-size: 10px; margin-top: 2px; text-align: center; }
+    .signatory-input { width: 100%; padding: 3px 5px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; margin-bottom: 3px; text-align: center; }
+    .pdf-btn { background: #f8fafc; border: 1px dashed var(--border); padding: 4px; border-radius: 4px; cursor: pointer; font-size: 10px; color: var(--muted); text-align: center; margin-top: 2px; }
+    .pdf-btn:hover { background: #e2e8f0; color: var(--text); }
+    .overall-badge { padding: 3px 8px; border-radius: 12px; font-weight: 600; font-size: 10px; text-align: center; white-space: nowrap; }
     .badge-pending { background: #e0e7ff; color: #3730a3; }
     .badge-signed { background: var(--success); color: white; }
     .section-header { background: #f1f5f9; cursor: pointer; font-weight: 600; }
     .section-header:hover { background: #e2e8f0; }
-    .section-toggle { margin-right: 8px; }
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .section-toggle { margin-right: 6px; }
+    .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
     .hidden { display: none !important; }
-    .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    .loading { display: inline-block; width: 18px; height: 18px; border: 2px solid #f3f3f3; border-top: 2px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-right: 6px; vertical-align: middle; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .alert { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+    .alert { padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
     .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
     .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-    @media (max-width: 900px) { .controls { flex-direction: column; align-items: stretch; } .input-group, input[type="text"], select, .search-input { width: 100%; } table { display: block; } }
+    .debug-info { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin: 12px 0; font-family: monospace; font-size: 11px; max-height: 200px; overflow-y: auto; display: none; }
+    @media (max-width: 1000px) { .controls { flex-direction: column; align-items: stretch; } .input-group, input[type="text"], select, .search-input { width: 100%; } }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>📑 Трекер электронных подписей v2.0</h1>
-      <p>Поддерживаются .docx, .xlsx, .csv + автоизвлечение из PDF штампов. Клик по статусу меняет состояние.</p>
+      <h1>📑 Трекер ЭП v2.2</h1>
+      <p>Поддержка до 3 разработчиков + автоизвлечение из PDF штампов. Прогресс сохраняется автоматически.</p>
     </header>
 
     <div class="upload-area" id="dropZone">
-      <p style="font-size: 16px; margin-bottom: 10px;">📥 Перетащите файл сюда или нажмите для выбора</p>
-      <p style="font-size: 13px; color: #64748b; margin: 0;">Форматы: .docx (Word), .xlsx/.csv (Excel)</p>
+      <p style="font-size: 15px; margin-bottom: 8px;">📥 Перетащите файл сюда или нажмите для выбора</p>
+      <p style="font-size: 12px; color: #64748b; margin: 0;">.docx, .xlsx, .csv</p>
       <input type="file" id="fileInput" accept=".docx,.xlsx,.xls,.csv">
     </div>
 
     <div id="alertContainer"></div>
+    <div id="debugContainer" class="debug-info"></div>
 
-    <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center;">
-      <button class="btn-outline" onclick="loadDemo()">🔹 Демо-данные</button>
+    <div style="display:flex; gap:10px; margin-bottom:12px; justify-content:center;">
+      <button class="btn-outline" onclick="loadDemo()">🔹 Демо</button>
       <button class="btn-outline" onclick="clearAll()">🗑️ Очистить</button>
+      <button class="btn-outline" onclick="document.getElementById('debugContainer').style.display=document.getElementById('debugContainer').style.display==='block'?'none':'block'">🔍 Диагностика</button>
     </div>
 
-    <div class="controls hidden" id="globalSignatoryPanel">
-      <div class="input-group"><label>Разработал (по умолчанию)</label><input type="text" id="devName" placeholder="Фамилия И.О."></div>
-      <div class="input-group"><label>Проверил (по умолчанию)</label><input type="text" id="checkName" placeholder="Фамилия И.О."></div>
-      <div class="input-group"><label>Н. контр. (по умолчанию)</label><input type="text" id="normName" placeholder="Фамилия И.О."></div>
-      <button class="btn-primary" onclick="applyGlobalSignatories()">✅ Применить ко всем</button>
-      <button class="btn-outline" onclick="exportToExcel()" style="margin-left:auto;">💾 Экспорт в Excel</button>
+    <div class="controls hidden" id="globalPanel">
+      <div class="input-group"><label>Разработал 1</label><input type="text" id="dev1" placeholder="Фамилия"></div>
+      <div class="input-group"><label>Разработал 2</label><input type="text" id="dev2" placeholder="Фамилия"></div>
+      <div class="input-group"><label>Разработал 3</label><input type="text" id="dev3" placeholder="Фамилия"></div>
+      <div class="input-group"><label>Проверил</label><input type="text" id="check" placeholder="Фамилия"></div>
+      <div class="input-group"><label>Н. контр.</label><input type="text" id="norm" placeholder="Фамилия"></div>
+      <button class="btn-primary" onclick="applyGlobal()">✅ Применить</button>
+      <button class="btn-outline" onclick="exportToExcel()" style="margin-left:auto;">💾 Excel</button>
     </div>
 
     <div class="dashboard hidden" id="dashboard">
       <div class="stat-card"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Всего томов</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:var(--success)" id="statSigned">0</div><div class="stat-label">✅ Подписано</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:var(--warning)" id="statPending">0</div><div class="stat-label">⏳ Ожидает</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--success)" id="statSigned">0</div><div class="stat-label">✅ Готово</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--warning)" id="statPending">0</div><div class="stat-label">⏳ В работе</div></div>
       <div class="stat-card"><div class="stat-value" id="statProgress">0%</div><div class="stat-label">Прогресс</div><div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div></div>
     </div>
 
     <div class="filters hidden" id="filtersPanel">
-      <select id="filterStatus" onchange="renderTable()"><option value="all">Все статусы</option><option value="pending">⏳ Ожидает</option><option value="signed">✅ Подписано</option><option value="revision">🔄 Доработка</option></select>
-      <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск по коду или названию..." oninput="renderTable()">
+      <select id="filterStatus" onchange="renderTable()"><option value="all">Все статусы</option><option value="pending">⏳ Ожидает</option><option value="signed">✅ Готово</option><option value="revision">🔄 Доработка</option></select>
+      <input type="text" class="search-input" id="searchInput" placeholder=" Поиск по коду или названию..." oninput="renderTable()">
     </div>
 
     <div class="table-wrapper">
       <table class="hidden" id="mainTable">
-        <thead><tr><th class="num-cell">№</th><th>Обозначение</th><th>Наименование</th><th style="width:180px">Разработал</th><th style="width:180px">Проверил</th><th style="width:180px">Н. контр.</th><th>Итог</th></tr></thead>
+        <thead>
+          <tr>
+            <th class="num-cell">№</th>
+            <th>Обозначение</th>
+            <th>Наименование</th>
+            <th>Разр. 1</th>
+            <th>Разр. 2</th>
+            <th>Разр. 3</th>
+            <th>Проверил</th>
+            <th>Н. контр.</th>
+            <th>Итог</th>
+          </tr>
+        </thead>
         <tbody id="tableBody"></tbody>
       </table>
-      <div class="empty-state" id="emptyState">📂 Загрузите .docx/.xlsx файл или нажмите «Демо-данные»</div>
+      <div class="empty-state" id="emptyState">📂 Загрузите файл или нажмите «Демо»</div>
     </div>
   </div>
 
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    let appData = { volumes: [], globalSignatories: { dev: '', check: '', norm: '' } };
-    const STORAGE_KEY = 'ep_tracker_v2';
-    const STATUS_CYCLE = ['⏳ Ожидает', '✅ Подписан', '🔄 Доработка'];
+    let appData = { volumes: [], global: { devs: ['','',''], check: '', norm: '' } };
+    const STORAGE_KEY = 'ep_tracker_v2_2';
+    const STATUS_CYCLE = ['⏳ Ожидает', '✅ Подписан', '🔄 Доработка', '➖ Н/Т'];
 
     window.addEventListener('DOMContentLoaded', () => { loadFromStorage(); setupFileUpload(); });
 
-    function showAlert(message, type = 'error') {
-      const container = document.getElementById('alertContainer');
-      const alert = document.createElement('div');
-      alert.className = `alert alert-${type}`;
-      alert.textContent = message;
-      container.innerHTML = '';
-      container.appendChild(alert);
-      setTimeout(() => alert.remove(), 5000);
+    function showAlert(msg, type='error') {
+      const c = document.getElementById('alertContainer');
+      const a = document.createElement('div'); a.className = `alert alert-${type}`; a.textContent = msg;
+      c.innerHTML = ''; c.appendChild(a); setTimeout(() => a.remove(), 6000);
+    }
+
+    function logDebug(msg) {
+      const c = document.getElementById('debugContainer');
+      c.innerHTML = `<strong>🔍 Лог:</strong><br>${msg.replace(/\n/g,'<br>')}`;
+      console.log('DEBUG:', msg);
     }
 
     function setupFileUpload() {
@@ -147,423 +167,287 @@
 
     function handleFile(file) {
       const ext = file.name.split('.').pop().toLowerCase();
-      if (!file) return;
-      const uploadText = document.querySelector('.upload-area p');
-      const originalText = uploadText.textContent;
-      uploadText.innerHTML = `<span class="loading"></span> Чтение: ${file.name}...`;
+      const txt = document.querySelector('.upload-area p');
+      const orig = txt.innerHTML;
+      txt.innerHTML = `<span class="loading"></span> Загрузка: ${file.name}...`;
+      
+      const timeout = setTimeout(() => {
+        showAlert('Превышено время (10 сек). Попробуйте .xlsx или упростите файл.', 'error');
+        txt.innerHTML = orig;
+      }, 10000);
 
       if (ext === 'docx') {
-        const reader = new FileReader();
-        reader.onload = e => {
+        const r = new FileReader();
+        r.onload = e => {
+          clearTimeout(timeout);
           mammoth.convertToHTML({arrayBuffer: e.target.result})
             .then(res => {
-              console.log('DOCX parsed:', res.value.substring(0, 200));
-              parseDocxTable(res.value);
+              logDebug(`HTML получен: ${res.value.length} символов`);
+              if(!res.value.includes('<table')) { showAlert('Таблица не найдена в DOCX.', 'error'); txt.innerHTML = orig; return; }
+              parseDocx(res.value);
             })
-            .catch(err => {
-              console.error('DOCX error:', err);
-              showAlert('Ошибка чтения DOCX: ' + err.message);
-              uploadText.textContent = originalText;
-            });
+            .catch(err => { clearTimeout(timeout); showAlert('Ошибка DOCX: '+err.message, 'error'); txt.innerHTML = orig; });
         };
-        reader.onerror = () => {
-          showAlert('Ошибка чтения файла');
-          uploadText.textContent = originalText;
-        };
-        reader.readAsArrayBuffer(file);
+        r.readAsArrayBuffer(file);
       } else if (['xlsx','xls','csv'].includes(ext)) {
-        const reader = new FileReader();
-        reader.onload = e => {
+        const r = new FileReader();
+        r.onload = e => {
+          clearTimeout(timeout);
           try {
-            const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-            const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
-            console.log('Excel parsed:', json);
-            parseAndLoad(json);
-          } catch(err) {
-            console.error('Excel error:', err);
-            showAlert('Ошибка Excel/CSV: ' + err.message);
-            uploadText.textContent = originalText;
-          }
+            const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+            const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+            logDebug(`Excel: ${json.length} строк`);
+            parseExcel(json);
+          } catch(err) { showAlert('Ошибка Excel: '+err.message, 'error'); txt.innerHTML = orig; }
         };
-        reader.readAsArrayBuffer(file);
+        r.readAsArrayBuffer(file);
       } else {
-        showAlert('Поддерживаются только .docx, .xlsx, .csv');
-        uploadText.textContent = originalText;
+        clearTimeout(timeout); showAlert('Поддерживаются .docx, .xlsx, .csv', 'error'); txt.innerHTML = orig;
       }
     }
 
-    function parseDocxTable(html) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const table = doc.querySelector('table');
-      
-      if (!table) {
-        showAlert('В документе не найдена таблица. Убедитесь, что состав проекта оформлен таблицей.');
-        return;
-      }
+    function createVolumeObj(id, num, section, code, name) {
+      return {
+        id, num: num||String(id), section, code, name: name||'Без названия',
+        devs: Array(3).fill().map(()=>({name:'', status:'⏳ Ожидает', date:''})),
+        check: {name:'', status:'⏳ Ожидает', date:''},
+        norm: {name:'', status:' Ожидает', date:''}
+      };
+    }
 
-      const rows = table.querySelectorAll('tr');
-      const volumes = [];
-      let idx = 1;
-      let currentSection = '';
+    function parseDocx(html) {
+      try {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const tables = doc.querySelectorAll('table');
+        let mainTable = null, maxRows = 0;
+        tables.forEach(t => { if(t.querySelectorAll('tr').length > maxRows){ maxRows = t.querySelectorAll('tr').length; mainTable = t; } });
+        if(!mainTable) { showAlert('Таблица не найдена.', 'error'); return; }
 
-      rows.forEach(row => {
-        const cells = Array.from(row.querySelectorAll('td, th')).map(c => c.textContent.trim().replace(/\s+/g, ' '));
-        if (cells.length < 2) return;
-
-        const text = cells.join(' ').toLowerCase();
-        
-        // Skip headers and footers
-        if (text.includes('изм.') || text.includes('подп.') || text.includes('дата') || 
-            text.includes('разработал') && text.includes('проверил') || 
-            text.includes('н. контр.') || text.includes('состав проектной') ||
-            text.includes('лист') || text.includes('листов')) return;
-
-        // Detect section headers
-        if (text.match(/раздел\s+\d+/) || text.match(/часть\s+\d+\./) && !text.includes('дп-')) {
-          currentSection = cells.find(c => c.match(/раздел|часть/i)) || '';
-          return;
-        }
-
-        // Find rows with volume codes
-        const codeMatch = cells.find(c => c.match(/дп-\d{4}-\d+-птс/i));
-        if (!codeMatch) return;
-
-        const code = codeMatch.replace(/\s+/g, ''); // Remove all spaces
-        const codeIdx = cells.findIndex(c => c.includes('ДП-') || c.includes('дп-'));
-        
-        // Get number from first column or generate
-        let num = cells[0] || '';
-        if (!num.match(/^\d/)) num = '';
-        
-        // Get name - usually next cell after code or longest text cell
-        let name = '';
-        for (let i = codeIdx + 1; i < cells.length; i++) {
-          if (cells[i].length > 10 && cells[i] !== code) {
-            name = cells[i];
-            break;
+        const volumes = [];
+        let idx = 1, section = '';
+        mainTable.querySelectorAll('tr').forEach(row => {
+          const cells = Array.from(row.querySelectorAll('td,th')).map(c => c.textContent.trim().replace(/\s+/g,' '));
+          if(!cells.length) return;
+          const text = cells.join('|').toLowerCase();
+          if(text.match(/изм\.|подп\.|дата|лист|дп-2025-1246-птс1\.1 -с п/)) return;
+          if(text.match(/раздел\s+\d+/)) { section = cells.find(c=>c.match(/раздел/i))||''; return; }
+          const code = cells.find(c=>c.match(/дп-\d{4}-\d+-птс/i));
+          if(code) {
+            const cleanCode = code.replace(/\s+/g,'').replace(/-с\s*п$/,'-СП');
+            let name = cells.slice(cells.indexOf(code)+1).find(c=>c.length>10 && !c.match(/дп-/i)) || '';
+            volumes.push(createVolumeObj(idx, cells[0], section, cleanCode, name));
+            idx++;
           }
-        }
-        if (!name) name = cells.find(c => c.length > 15 && c !== code) || '';
+        });
 
-        if (code && name) {
-          volumes.push({
-            id: idx,
-            num: num || String(idx),
-            section: currentSection,
-            code: code,
-            name: name.trim(),
-            dev: { status: '⏳ Ожидает', date: '', name: '' },
-            check: { status: '⏳ Ожидает', date: '', name: '' },
-            norm: { status: '⏳ Ожидает', date: '', name: '' },
-            pdfFile: null
-          });
-          idx++;
-        }
-      });
-
-      if (volumes.length === 0) {
-        showAlert('Не найдены тома с обозначениями ДП-... Проверьте формат таблицы.');
-        return;
-      }
-
-      appData.volumes = volumes;
-      document.getElementById('globalSignatoryPanel').classList.remove('hidden');
-      document.getElementById('devName').value = 'Савельев';
-      document.getElementById('checkName').value = 'Вахрушев';
-      document.getElementById('normName').value = 'Шанина';
-      document.querySelector('.upload-area p').textContent = `✅ Загружено томов: ${volumes.length}`;
-      showAlert(`Успешно загружено ${volumes.length} томов`, 'success');
-      applyGlobalSignatories();
+        if(!volumes.length) { showAlert('Тома не найдены. Проверьте формат.', 'error'); return; }
+        appData.volumes = volumes;
+        document.getElementById('globalPanel').classList.remove('hidden');
+        document.getElementById('dev1').value = 'Савельев';
+        showAlert(`Загружено ${volumes.length} томов`, 'success');
+        applyGlobal();
+      } catch(err) { showAlert('Ошибка парсинга: '+err.message, 'error'); }
     }
 
-    function parseAndLoad(rows) {
-      const headers = Object.keys(rows[0] || {});
+    function parseExcel(rows) {
+      const headers = Object.keys(rows[0]||{});
       const map = {};
-      const keywords = { 
-        num: ['№', 'п/п', 'номер'],
-        code: ['обозначение', 'код', 'марка'], 
-        name: ['наименование', 'название', 'раздел', 'том'] 
-      };
+      const keys = { num:['№','п/п'], code:['обозначение','код'], name:['наименование','название','раздел','том'] };
+      headers.forEach(h => { const c=h.toLowerCase().replace(/[^а-яёa-z0-9]/g,''); for(const[k,w] of Object.entries(keys)) if(w.some(s=>c.includes(s))) map[k]=h; });
       
-      headers.forEach(h => { 
-        const c = h.toLowerCase().replace(/[^а-яёa-z0-9]/g,''); 
-        for(const [k,w] of Object.entries(keywords)) {
-          if(w.some(s=>c.includes(s))) map[k]=h; 
-        } 
-      });
-
-      const volumes = rows.map((r, i) => {
-        const code = String(r[map.code]||'').trim().replace(/\s+/g, '');
+      const volumes = rows.map((r,i)=>{
+        const code = String(r[map.code]||'').trim().replace(/\s+/g,'');
         const name = String(r[map.name]||'').trim();
-        const num = String(r[map.num]||'').trim();
-        if (!code && !name) return null;
-        return {
-          id: i+1,
-          num: num || String(i+1),
-          section: '',
-          code: code,
-          name: name,
-          dev:{status:'⏳ Ожидает',date:'',name:''}, 
-          check:{status:'⏳ Ожидает',date:'',name:''}, 
-          norm:{status:'⏳ Ожидает',date:'',name:''},
-          pdfFile: null
-        };
-      }).filter(v => v && (v.code || v.name));
+        if(!code && !name) return null;
+        return createVolumeObj(i+1, String(r[map.num]||'').trim(), '', code, name);
+      }).filter(Boolean);
 
-      if (!volumes.length) {
-        showAlert('Не найдены данные. Проверьте заголовки таблицы (должны быть: №, Обозначение, Наименование).');
-        return;
-      }
-
+      if(!volumes.length) { showAlert('Данные не найдены.', 'error'); return; }
       appData.volumes = volumes;
-      document.getElementById('globalSignatoryPanel').classList.remove('hidden');
-      document.getElementById('devName').value = 'Савельев'; 
-      document.getElementById('checkName').value = 'Вахрушев'; 
-      document.getElementById('normName').value = 'Шанина';
-      showAlert(`Успешно загружено ${volumes.length} томов`, 'success');
-      applyGlobalSignatories();
+      document.getElementById('globalPanel').classList.remove('hidden');
+      document.getElementById('dev1').value = 'Савельев';
+      showAlert(`Загружено ${volumes.length} томов`, 'success');
+      applyGlobal();
     }
 
-    function applyGlobalSignatories() {
-      appData.globalSignatories = { 
-        dev: document.getElementById('devName').value.trim()||'Разработал', 
-        check: document.getElementById('checkName').value.trim()||'Проверил', 
-        norm: document.getElementById('normName').value.trim()||'Н. контр.' 
+    function applyGlobal() {
+      appData.global = {
+        devs: [document.getElementById('dev1').value.trim(), document.getElementById('dev2').value.trim(), document.getElementById('dev3').value.trim()],
+        check: document.getElementById('check').value.trim(),
+        norm: document.getElementById('norm').value.trim()
       };
-      
-      // Apply to volumes that don't have individual names set
       appData.volumes.forEach(v => {
-        if (!v.dev.name) v.dev.name = appData.globalSignatories.dev;
-        if (!v.check.name) v.check.name = appData.globalSignatories.check;
-        if (!v.norm.name) v.norm.name = appData.globalSignatories.norm;
+        v.devs.forEach((d,i) => { if(!d.name && appData.global.devs[i]) d.name = appData.global.devs[i]; });
+        if(!v.check.name && appData.global.check) v.check.name = appData.global.check;
+        if(!v.norm.name && appData.global.norm) v.norm.name = appData.global.norm;
       });
-      
-      document.getElementById('mainTable').classList.remove('hidden'); 
-      document.getElementById('dashboard').classList.remove('hidden'); 
-      document.getElementById('filtersPanel').classList.remove('hidden'); 
+      document.getElementById('mainTable').classList.remove('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('filtersPanel').classList.remove('hidden');
       document.getElementById('emptyState').classList.add('hidden');
       renderTable();
     }
 
     function renderTable() {
-      const tbody = document.getElementById('tableBody'); 
-      tbody.innerHTML = '';
+      const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
       const filter = document.getElementById('filterStatus').value;
       const search = document.getElementById('searchInput').value.toLowerCase();
-      
-      let currentSection = '';
-      
+      let curSection = '';
+
       appData.volumes.forEach((v, idx) => {
-        // Filter
-        if (search && !v.code.toLowerCase().includes(search) && !v.name.toLowerCase().includes(search)) return;
-        if (filter !== 'all') { 
-          const r=[v.dev,v.check,v.norm]; 
-          const pend=r.some(s=>s.status==='⏳ Ожидает'); 
-          const rev=r.some(s=>s.status==='🔄 Доработка'); 
-          if(filter==='pending'&&!pend) return; 
-          if(filter==='signed'&&pend) return; 
-          if(filter==='revision'&&!rev) return; 
+        if(search && !v.code.toLowerCase().includes(search) && !v.name.toLowerCase().includes(search)) return;
+        if(filter!=='all') {
+          const allRoles = [...v.devs, v.check, v.norm];
+          const isPending = allRoles.some(r=>r.status==='⏳ Ожидает' && r.name);
+          const isRevision = allRoles.some(r=>r.status==='🔄 Доработка');
+          if(filter==='pending' && !isPending) return;
+          if(filter==='signed' && isPending) return;
+          if(filter==='revision' && !isRevision) return;
         }
 
-        // Section header
-        if (v.section && v.section !== currentSection) {
-          currentSection = v.section;
-          const tr = document.createElement('tr');
-          tr.className = 'section-header';
-          tr.innerHTML = `<td colspan="7"><span class="section-toggle">▶</span>${currentSection}</td>`;
-          tr.onclick = (e) => {
-            if (e.target.classList.contains('section-toggle')) {
-              const toggle = e.target;
-              let next = toggle.closest('tr').nextElementSibling;
-              while (next && !next.classList.contains('section-header')) {
-                next.style.display = next.style.display === 'none' ? '' : 'none';
-                next = next.nextElementSibling;
-              }
-              toggle.textContent = toggle.textContent === '▶' ? '▼' : '▶';
+        if(v.section && v.section!==curSection) {
+          curSection = v.section;
+          const tr = document.createElement('tr'); tr.className='section-header';
+          tr.innerHTML = `<td colspan="9"><span class="section-toggle">▶</span>${curSection}</td>`;
+          tr.onclick = e => {
+            if(e.target.classList.contains('section-toggle')) {
+              const t=e.target, n=t.closest('tr').nextElementSibling;
+              while(n && !n.classList.contains('section-header')) { n.style.display = n.style.display==='none'?'':'none'; n=n.nextElementSibling; }
+              t.textContent = t.textContent==='▶'?'▼':'▶';
             }
           };
           tbody.appendChild(tr);
         }
 
         const tr = document.createElement('tr');
+        let devsHtml = v.devs.map((d,i) => roleCell(d, idx, `dev_${i}`)).join('');
         tr.innerHTML = `
           <td class="num-cell">${v.num}</td>
           <td><span class="code-cell">${v.code||'—'}</span></td>
-          <td>${v.name||'—'}</td>
-          <td>${signatoryCell(v.dev, idx, 'dev')}</td>
-          <td>${signatoryCell(v.check, idx, 'check')}</td>
-          <td>${signatoryCell(v.norm, idx, 'norm')}</td>
+          <td>${v.name}</td>
+          ${devsHtml}
+          <td class="role-cell">${roleCell(v.check, idx, 'check')}</td>
+          <td class="role-cell">${roleCell(v.norm, idx, 'norm')}</td>
           <td>${overallBadge(v)}</td>
         `;
         tbody.appendChild(tr);
-      }); 
+      });
       updateDashboard();
     }
 
-    function signatoryCell(state, rowIdx, role) {
-      const statusClass = state.status.includes('Ожидает') ? 'status-pending' : 
-                          state.status.includes('Подписан') ? 'status-signed' : 'status-revision';
+    function roleCell(state, idx, role) {
+      const cls = state.status.includes('Ожидает')?'status-pending':state.status.includes('Подписан')?'status-signed':state.status.includes('Доработка')?'status-revision':'status-na';
+      const inputId = `inp_${idx}_${role}`;
+      const fileId = `file_${idx}_${role}`;
       return `
-        <input type="text" class="signatory-input" value="${state.name||''}" placeholder="${role==='dev'?'Разработал':role==='check'?'Проверил':'Н. контр.'}" onchange="updateSignatory(${rowIdx}, '${role}', this.value)">
-        <span class="status-btn ${statusClass}" onclick="cycleStatus(${rowIdx}, '${role}')">${state.status}</span>
-        <div class="date-cell">${state.date||''}</div>
-        <div class="pdf-upload-btn" onclick="document.getElementById('pdfInput_${rowIdx}_${role}').click()">📎 PDF штамп</div>
-        <input type="file" id="pdfInput_${rowIdx}_${role}" style="display:none" accept=".pdf" onchange="extractFromPDF(${rowIdx}, '${role}', this)">
+        <div class="role-cell">
+          <input type="text" id="${inputId}" class="signatory-input" value="${state.name||''}" placeholder="Фамилия" onchange="updateName(${idx},'${role}',this.value)">
+          <span class="status-btn ${cls}" onclick="cycle(${idx},'${role}')">${state.status}</span>
+          <div class="date-cell">${state.date||''}</div>
+          <div class="pdf-btn" onclick="document.getElementById('${fileId}').click()">📎 PDF</div>
+          <input type="file" id="${fileId}" style="display:none" accept=".pdf" onchange="extractPDF(${idx},'${role}',this)">
+        </div>
       `;
     }
 
-    function updateSignatory(idx, role, value) {
-      appData.volumes[idx][role].name = value.trim();
-      saveToStorage();
+    function updateName(idx, role, val) {
+      if(role.startsWith('dev_')) appData.volumes[idx].devs[parseInt(role.split('_')[1])].name = val.trim();
+      else appData.volumes[idx][role].name = val.trim();
+      save();
     }
 
-    async function extractFromPDF(rowIdx, role, input) {
-      const file = input.files[0];
-      if (!file) return;
+    function cycle(idx, role) {
+      const target = role.startsWith('dev_') ? appData.volumes[idx].devs[parseInt(role.split('_')[1])] : appData.volumes[idx][role];
+      const ni = (STATUS_CYCLE.indexOf(target.status)+1)%4;
+      target.status = STATUS_CYCLE[ni];
+      target.date = target.status==='✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : '';
+      save(); renderTable();
+    }
 
+    async function extractPDF(idx, role, input) {
+      const file = input.files[0]; if(!file) return;
       try {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-        
-        let extractedText = '';
-        // Extract text from first 3 pages (stamps usually on first or last)
-        for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
-          const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
-          extractedText += textContent.items.map(item => item.str).join(' ');
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+        let txt = '';
+        for(let i=1; i<=Math.min(pdf.numPages,3); i++) {
+          const p = await pdf.getPage(i); txt += (await p.getTextContent()).items.map(it=>it.str).join(' ');
         }
+        const patterns = { dev:/разработал[:\s]+([а-яё\.]+)/i, check:/проверил[:\s]+([а-яё\.]+)/i, norm:/н\.\s*контр[:\s]+([а-яё\.]+)/i };
+        const key = role.startsWith('dev_') ? 'dev' : role;
+        const m = txt.match(patterns[key]);
+        if(m && m[1]) {
+          const target = role.startsWith('dev_') ? appData.volumes[idx].devs[parseInt(role.split('_')[1])] : appData.volumes[idx][role];
+          target.name = m[1].trim(); target.status='✅ Подписан'; target.date=new Date().toLocaleDateString('ru-RU');
+          showAlert(`Извлечено: ${m[1]}`, 'success'); save(); renderTable();
+        } else { showAlert('Фамилия не найдена в PDF', 'error'); }
+      } catch(err) { showAlert('Ошибка PDF: '+err.message, 'error'); }
+    }
 
-        // Also check last page
-        const lastPage = await pdf.getPage(pdf.numPages);
-        const lastText = await lastPage.getTextContent();
-        extractedText += ' ' + lastText.items.map(item => item.str).join(' ');
+    function overallBadge(v) {
+      const all = [...v.devs, v.check, v.norm];
+      const ready = all.every(r => !r.name || r.status==='✅ Подписан' || r.status==='➖ Н/Т');
+      const rev = all.some(r => r.status==='🔄 Доработка');
+      return ready ? '<span class="overall-badge badge-signed">✅ Готово</span>' : rev ? '<span class="overall-badge" style="background:#fee2e2;color:#991b1b">🔄 Доработка</span>' : '<span class="overall-badge badge-pending">⏳ В работе</span>';
+    }
 
-        // Search for patterns like "Разработал: Фамилия" or just "Фамилия" near role keywords
-        const patterns = {
-          'dev': /(?:разработал|разр)[:\s]+([а-яё]+\s*[а-яё\.]*)/i,
-          'check': /(?:проверил|пр)[:\s]+([а-яё]+\s*[а-яё\.]*)/i,
-          'norm': /(?:н\.\s*контр|нормоконтр)[:\s]+([а-яё]+\s*[а-яё\.]*)/i
-        };
+    function updateDashboard() {
+      const t = appData.volumes.length; if(!t) return;
+      let s=0, p=0, signedRoles=0, totalRoles=0;
+      appData.volumes.forEach(v => {
+        const all = [...v.devs, v.check, v.norm];
+        const filled = all.filter(r=>r.name);
+        totalRoles += filled.length;
+        signedRoles += filled.filter(r=>r.status==='✅ Подписан').length;
+        if(filled.every(r=>r.status==='✅ Подписан'||r.status==='➖ Н/Т')) s++; else p++;
+      });
+      document.getElementById('statTotal').textContent=t;
+      document.getElementById('statSigned').textContent=s;
+      document.getElementById('statPending').textContent=p;
+      const pct = totalRoles ? Math.round((signedRoles/totalRoles)*100) : 0;
+      document.getElementById('statProgress').textContent=pct+'%';
+      document.getElementById('progressBar').style.width=pct+'%';
+    }
 
-        const match = extractedText.match(patterns[role]);
-        if (match && match[1]) {
-          const name = match[1].trim().replace(/\s+/g, ' ');
-          appData.volumes[rowIdx][role].name = name;
-          appData.volumes[rowIdx][role].status = '✅ Подписан';
-          appData.volumes[rowIdx][role].date = new Date().toLocaleDateString('ru-RU');
-          showAlert(`Извлечено из PDF: ${name}`, 'success');
-          saveToStorage();
-          renderTable();
-        } else {
-          // Try to find any Cyrillic name (2+ words)
-          const nameMatch = extractedText.match(/([а-яё]{3,}\s+[а-яё\.]{3,})/i);
-          if (nameMatch) {
-            const name = nameMatch[1].trim();
-            if (confirm(`Найдено: "${name}". Использовать?`)) {
-              appData.volumes[rowIdx][role].name = name;
-              appData.volumes[rowIdx][role].status = '✅ Подписан';
-              appData.volumes[rowIdx][role].date = new Date().toLocaleDateString('ru-RU');
-              saveToStorage();
-              renderTable();
-            }
-          } else {
-            showAlert('Не удалось автоматически найти фамилию в PDF. Попробуйте другой файл.', 'error');
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); }
+    function loadFromStorage() {
+      const d = localStorage.getItem(STORAGE_KEY);
+      if(d) {
+        try {
+          appData = JSON.parse(d);
+          // Миграция старых данных если нужно
+          if(!appData.global) appData.global = {devs:['','',''], check:'', norm:''};
+          appData.volumes.forEach(v => { if(!v.devs) v.devs = Array(3).fill().map(()=>({name:'',status:'⏳ Ожидает',date:''})); });
+          document.getElementById('dev1').value = appData.global.devs[0]||'';
+          document.getElementById('dev2').value = appData.global.devs[1]||'';
+          document.getElementById('dev3').value = appData.global.devs[2]||'';
+          document.getElementById('check').value = appData.global.check||'';
+          document.getElementById('norm').value = appData.global.norm||'';
+          if(appData.volumes.length) {
+            document.getElementById('globalPanel').classList.remove('hidden');
+            applyGlobal();
           }
-        }
-      } catch (err) {
-        console.error('PDF extraction error:', err);
-        showAlert('Ошибка чтения PDF: ' + err.message, 'error');
+        } catch(e) { console.error(e); }
       }
     }
-
-    function cycleStatus(idx, role) { 
-      const s = appData.volumes[idx][role]; 
-      const ni = (STATUS_CYCLE.indexOf(s.status)+1)%3; 
-      s.status=STATUS_CYCLE[ni]; 
-      s.date = s.status==='✅ Подписан' ? new Date().toLocaleDateString('ru-RU') : ''; 
-      saveToStorage(); 
-      renderTable(); 
+    function clearAll() { if(confirm('Очистить всё?')){ localStorage.removeItem(STORAGE_KEY); location.reload(); } }
+    function loadDemo() {
+      parseExcel([
+        {"№":"1.1","Обозначение":"ДП-2025-1246-ПТС1.1-ПЗ1","Наименование":"Общая пояснительная записка"},
+        {"№":"2.1","Обозначение":"ДП-2025-1246-ПТС1.1-ППО1","Наименование":"Проект полосы отвода. Текст"}
+      ]);
     }
-
-    function overallBadge(v) { 
-      const all=[v.dev,v.check,v.norm].every(s=>s.status==='✅ Подписан'); 
-      const rev=[v.dev,v.check,v.norm].some(s=>s.status==='🔄 Доработка'); 
-      return all?'<span class="overall-badge badge-signed">✅ Готово</span>':rev?'<span class="overall-badge" style="background:#fee2e2;color:#991b1b">🔄 Доработка</span>':'<span class="overall-badge badge-pending">⏳ В работе</span>'; 
-    }
-
-    function updateDashboard() { 
-      const t=appData.volumes.length; 
-      if(!t) return; 
-      let s=0,p=0,sr=0,tr=0; 
-      appData.volumes.forEach(v=>{
-        const r=[v.dev,v.check,v.norm]; 
-        if(r.every(x=>x.status==='✅ Подписан'))s++; 
-        else p++; 
-        r.forEach(x=>{tr++;if(x.status==='✅ Подписан')sr++});
-      }); 
-      document.getElementById('statTotal').textContent=t; 
-      document.getElementById('statSigned').textContent=s; 
-      document.getElementById('statPending').textContent=p; 
-      const pct=Math.round((sr/tr)*100); 
-      document.getElementById('statProgress').textContent=pct+'%'; 
-      document.getElementById('progressBar').style.width=pct+'%'; 
-    }
-
-    function saveToStorage() { 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); 
-    }
-
-    function loadFromStorage() { 
-      const d=localStorage.getItem(STORAGE_KEY); 
-      if(d){
-        try{
-          appData=JSON.parse(d);
-          document.getElementById('devName').value=appData.globalSignatories.dev||'Савельев';
-          document.getElementById('checkName').value=appData.globalSignatories.check||'Вахрушев';
-          document.getElementById('normName').value=appData.globalSignatories.norm||'Шанина';
-          if(appData.volumes.length){
-            document.getElementById('globalSignatoryPanel').classList.remove('hidden');
-            applyGlobalSignatories();
-          }
-        }catch(e){console.error('Load error:',e);}
-      } 
-    }
-
-    function clearAll() { 
-      if(confirm('Очистить все данные?')){
-        localStorage.removeItem(STORAGE_KEY);
-        location.reload();
-      } 
-    }
-
-    function loadDemo() { 
-      parseAndLoad([
-        {"№":"1.1","Обозначение":"ДП-2025-1246-ПТС1.1-ПЗ1","Наименование":"Часть 1. Общая пояснительная записка"},
-        {"№":"2.1","Обозначение":"ДП-2025-1246-ПТС1.1-ППО1","Наименование":"Часть 1. Текстовая часть"},
-        {"№":"2.2.1","Обозначение":"ДП-2025-1246-ПТС1.1-ППО2.1","Наименование":"Книга 1. Участок 1 ПК 0 – ПК 295"}
-      ]); 
-    }
-
-    function exportToExcel() { 
-      const d=appData.volumes.map(v=>({
-        "№":v.num,
-        "Обозначение":v.code,
-        "Наименование":v.name,
-        "Раздел":v.section,
-        "Разработал":v.dev.name,
-        "Статус Р":v.dev.status,
-        "Дата Р":v.dev.date,
-        "Проверил":v.check.name,
-        "Статус П":v.check.status,
-        "Дата П":v.check.date,
-        "Н. контр":v.norm.name,
-        "Статус Н":v.norm.status,
-        "Дата Н":v.norm.date
-      })); 
-      const wb=XLSX.utils.book_new(); 
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d), "Трекер ЭП"); 
-      XLSX.writeFile(wb, `Трекер_ЭП_${new Date().toISOString().slice(0,10)}.xlsx`); 
+    function exportToExcel() {
+      const data = appData.volumes.map(v => {
+        const row = {"№":v.num, "Обозначение":v.code, "Наименование":v.name, "Раздел":v.section};
+        v.devs.forEach((d,i) => { row[`Разр.${i+1}`]=d.name; row[`Статус Р${i+1}`]=d.status; row[`Дата Р${i+1}`]=d.date; });
+        row["Проверил"]=v.check.name; row["Статус П"]=v.check.status; row["Дата П"]=v.check.date;
+        row["Н.контр"]=v.norm.name; row["Статус Н"]=v.norm.status; row["Дата Н"]=v.norm.date;
+        return row;
+      });
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Трекер ЭП");
+      XLSX.writeFile(wb, `Трекер_ЭП_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
   </script>
 </body>
